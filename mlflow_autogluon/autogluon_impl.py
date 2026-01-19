@@ -16,9 +16,13 @@ from typing import Any
 from mlflow.artifacts import download_artifacts
 from mlflow.exceptions import MlflowException
 from mlflow.models import Model
-from mlflow.models.model import MLMODEL_FILE_NAME, ModelInfo
-from mlflow.protos.databricks_pb2 import INVALID_PARAMETER_VALUE
-from mlflow.utils.environment import _mlflow_conda_env
+from mlflow.models.model import ModelInfo
+
+from mlflow_autogluon._mlflow_utils import (
+    INVALID_PARAMETER_VALUE,
+    MLMODEL_FILE_NAME,
+    _mlflow_conda_env,
+)
 
 FLAVOR_NAME = "autogluon"
 
@@ -78,6 +82,7 @@ def get_default_conda_env(
     )
 
 
+# TODO @claude: Decompose the wrapper.
 def save_model(
     autogluon_model: Any | object,
     path: str,

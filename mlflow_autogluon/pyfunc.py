@@ -14,8 +14,7 @@ from mlflow.pyfunc import PythonModel
 
 
 class _AutoGluonModelWrapper(PythonModel):
-    """
-    PyFunc wrapper for AutoGluon models.
+    """PyFunc wrapper for AutoGluon models.
 
     This wrapper enables AutoGluon models to be loaded via mlflow.pyfunc.load_model()
     and provides a standardized predict() interface that accepts pandas DataFrames.
