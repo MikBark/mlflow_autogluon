@@ -6,10 +6,10 @@ in MLflow, supporting tabular, multimodal, vision, and timeseries predictors.
 
 from __future__ import annotations
 
-from mlflow_autogluon._constants import FLAVOR_NAME
-from mlflow_autogluon._load import load_model
-from mlflow_autogluon._log import log_model
-from mlflow_autogluon._save import save_model
+from mlflow_autogluon.constants import FLAVOR_NAME
+from mlflow_autogluon.load import load_model
+from mlflow_autogluon.log import log_model
+from mlflow_autogluon.save import save_model
 
 __all__ = [
     "FLAVOR_NAME",

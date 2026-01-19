@@ -8,7 +8,7 @@ from mlflow.artifacts import download_artifacts
 from mlflow.exceptions import MlflowException
 from mlflow.models import Model
 
-from mlflow_autogluon._constants import (
+from mlflow_autogluon.constants import (
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
 )

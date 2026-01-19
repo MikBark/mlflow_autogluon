@@ -10,12 +10,12 @@ from mlflow.models import Model
 from mlflow.models.model import MLMODEL_FILE_NAME
 from mlflow.protos.databricks_pb2 import INVALID_PARAMETER_VALUE
 
-from mlflow_autogluon._constants import (
+from mlflow_autogluon.constants import (
     AUTODEPLOY_METADATA_FILE,
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
 )
-from mlflow_autogluon._requirements import get_default_conda_env
+from mlflow_autogluon.requirements import get_default_conda_env
 
 
 def save_model(

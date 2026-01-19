@@ -40,11 +40,11 @@ def log_model(
     """
     import sys
 
-    from mlflow_autogluon import _save
+    from mlflow_autogluon import save
 
     return Model.log(
         artifact_path=artifact_path,
-        flavor=sys.modules[_save.__name__],
+        flavor=sys.modules[save.__name__],
         autogluon_model=autogluon_model,
         model_type=model_type,
         conda_env=conda_env,
