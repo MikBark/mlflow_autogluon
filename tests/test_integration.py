@@ -45,7 +45,7 @@ def test_end_to_end_save_and_load_with_mock_model():
         mlmodel_path = Path(tmp) / "MLmodel"
         assert mlmodel_path.exists()
 
-        with patch("mlflow_autogluon.autogluon.autogluon_impl.TabularPredictor") as mock_predictor:
+        with patch("autogluon.tabular.TabularPredictor") as mock_predictor:
             mock_predictor.load.return_value = model
 
             loaded_model = load_model(tmp)
@@ -53,7 +53,7 @@ def test_end_to_end_save_and_load_with_mock_model():
             mock_predictor.load.assert_called_once()
 
 
-@patch("mlflow_autogluon.autogluon.autogluon_impl.TabularPredictor")
+@patch("autogluon.tabular.TabularPredictor")
 def test_load_model_calls_tabular_predictor_load(mock_predictor):
     """Test that load_model calls TabularPredictor.load()."""
 
@@ -65,7 +65,7 @@ def test_load_model_calls_tabular_predictor_load(mock_predictor):
         model_path.mkdir(parents=True, exist_ok=True)
 
         with patch(
-            "mlflow_autogluon.autogluon.autogluon_impl._download_artifact_from_uri"
+            "mlflow.artifacts.download_artifacts"
         ) as mock_download:
             mock_download.return_value = tmp
 

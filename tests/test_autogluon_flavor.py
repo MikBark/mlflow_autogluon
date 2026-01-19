@@ -111,14 +111,15 @@ def test_save_model_creates_model_subdirectory():
 def test_log_model_requires_active_run():
     """Test that log_model requires an active MLflow run."""
     from mlflow.exceptions import MlflowException
+    from mlflow_autogluon import log_model
 
     class FakeModel:
         def save(self, path):
             Path(path).mkdir(parents=True, exist_ok=True)
 
     with pytest.raises(MlflowException):
-        save_model(
+        log_model(
             autogluon_model=FakeModel(),
-            path="some_path",
+            artifact_path="model",
             model_type="tabular",
         )

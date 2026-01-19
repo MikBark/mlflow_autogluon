@@ -3,7 +3,6 @@ Test utilities for MLflow-AutoGluon tests.
 """
 
 
-
 def get_model_fixtures(model_type: str, request):
     """Get trained model and corresponding data fixture for model type."""
     return (

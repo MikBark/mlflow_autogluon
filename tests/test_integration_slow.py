@@ -5,7 +5,6 @@ These tests train actual models and test the full MLflow lifecycle.
 Marked with @pytest.mark.slow for opt-out in CI/CD.
 """
 
-
 import mlflow
 import pytest
 from mlflow.pyfunc import load_model as load_pyfunc
