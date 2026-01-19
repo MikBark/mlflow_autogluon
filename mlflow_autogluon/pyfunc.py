@@ -47,7 +47,7 @@ class _AutoGluonModelWrapper(PythonModel):
             context: MLflow context containing artifact path
         """
         if self._model is None:
-            from mlflow_autogluon.autogluon.autogluon_impl import load_model
+            from mlflow_autogluon.autogluon_impl import load_model
 
             model_path = getattr(context, "artifacts", self._model_path)
             self._model = load_model(model_path)
@@ -94,20 +94,20 @@ class _AutoGluonModelWrapper(PythonModel):
             model_input = pd.DataFrame(model_input)
 
         if predict_method == "predict":
-            result = self._model.predict(model_input)
+            output = self._model.predict(model_input)
         elif predict_method == "predict_proba":
             if not hasattr(self._model, "predict_proba"):
                 raise ValueError(
                     f"Model {type(self._model).__name__} does not support predict_proba"
                 )
             as_multiclass = params.get("as_multiclass", False)
-            result = self._model.predict_proba(model_input, as_multiclass=as_multiclass)
+            output = self._model.predict_proba(model_input, as_multiclass=as_multiclass)
         elif predict_method == "predict_multi":
             if not hasattr(self._model, "predict_multi"):
                 raise ValueError(
                     f"Model {type(self._model).__name__} does not support predict_multi"
                 )
-            result = self._model.predict_multi(model_input)
+            output = self._model.predict_multi(model_input)
         else:
             raise ValueError(
                 f"Invalid predict_method '{predict_method}'. "
@@ -115,7 +115,7 @@ class _AutoGluonModelWrapper(PythonModel):
             )
 
         as_pandas = params.get("as_pandas", True)
-        if not as_pandas and isinstance(result, pd.DataFrame):
-            return result.to_dict(orient="records")
+        if not as_pandas and isinstance(output, pd.DataFrame):
+            return output.to_dict(orient="records")
 
-        return result
+        return output

@@ -141,7 +141,7 @@ def save_model(
 
     mlflow_model.add_flavor(
         "python_function",
-        loader_module="mlflow_autogluon.autogluon.pyfunc",
+        loader_module="mlflow_autogluon.pyfunc",
         model_type=model_type,
     )
 
@@ -176,8 +176,8 @@ def save_model(
         metadata["supports_predict_proba"] = hasattr(autogluon_model, "predict_proba")
 
     metadata_file_path = path / AUTODEPLOY_METADATA_FILE
-    with open(metadata_file_path, "w") as f:
-        json.dump(metadata, f, indent=2)
+    with open(metadata_file_path, "w") as metadata_file:
+        json.dump(metadata, metadata_file, indent=2)
 
 
 def log_model(
@@ -284,8 +284,6 @@ def _load_pyfunc(path: str) -> Any:
     Returns:
         PyFunc-compatible wrapper instance
     """
-    from mlflow_autogluon.autogluon.pyfunc.autogluon_pyfunc import (
-        _AutoGluonModelWrapper,
-    )
+    from mlflow_autogluon.pyfunc import _AutoGluonModelWrapper
 
     return _AutoGluonModelWrapper(path)

@@ -8,9 +8,7 @@ from unittest.mock import MagicMock, Mock
 import pandas as pd
 import pytest
 
-from mlflow_autogluon.autogluon.pyfunc.autogluon_pyfunc import (
-    _AutoGluonModelWrapper,
-)
+from mlflow_autogluon.pyfunc import _AutoGluonModelWrapper
 
 
 def test_pyfunc_wrapper_init_with_model():

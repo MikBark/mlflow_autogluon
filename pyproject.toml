@@ -8,13 +8,10 @@ version = "0.1.0"
 description = "MLflow plugin for AutoGluon models"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "BSD-3-Clause"}
+license = {text = "MIT"}
 keywords = ["machine-learning", "ai", "mlflow", "autogluon", "automl"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -91,6 +88,7 @@ exclude_lines = [
 [tool.ruff]
 target-version = "py39"
 line-length = 100
+exclude = ["tests"]
 
 [tool.ruff.lint]
 select = [
@@ -113,12 +111,10 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["B011"]  # Allow assert in tests
-
 [tool.flake8]
-max-line-length = 100
+max-line-length = 90
 extend-ignore = ["E203", "W503"]
+exclude = ["tests"]
 per-file-ignores = [
     "mlflow_autogluon/autogluon/autogluon_impl.py:WPS433",
 ]

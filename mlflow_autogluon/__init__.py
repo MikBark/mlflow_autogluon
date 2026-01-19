@@ -7,7 +7,7 @@ This package provides MLflow integration for AutoGluon models, enabling:
 - PyFunc compatibility for standardized inference
 """
 
-from mlflow_autogluon.autogluon.autogluon_impl import (
+from mlflow_autogluon.autogluon_impl import (
     FLAVOR_NAME,
     get_default_conda_env,
     get_default_pip_requirements,
