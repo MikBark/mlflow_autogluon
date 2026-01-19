@@ -35,14 +35,12 @@ dev = [
     "flake8>=7.0",
     "flake8-pyproject>=1.0",
     "wemake-python-styleguide>=1.0",
-    # AutoGluon packages for integration tests
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
     "autogluon.tabular>=1.0.0",
-    "autogluon.multimodal>=1.0.0",
-    "autogluon.vision>=1.0.0",
-    "autogluon.timeseries>=1.0.0",
-    # Test data generation
     "scikit-learn>=1.0.0",
-    "pillow>=9.0.0",
 ]
 tabular = [
     "autogluon.tabular>=1.0.0",

@@ -11,7 +11,22 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
-      - run: pip install -e ".[dev]"
+      - run: pip install ruff flake8 flake8-pyproject
       - run: ruff format --check mlflow_autogluon tests examples
       - run: ruff check mlflow_autogluon tests examples
       - run: flake8 mlflow_autogluon tests examples
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.13']
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - run: pip install -e ".[test]"
+      - run: pytest tests/ -m "not slow" -v
