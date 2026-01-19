@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from mlflow_autogluon.mlflow import _mlflow_conda_env
+from mlflow_autogluon.mlflow_utils import _mlflow_conda_env
 
 
 def get_default_pip_requirements(
