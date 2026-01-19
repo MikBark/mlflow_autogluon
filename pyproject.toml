@@ -114,18 +114,18 @@ line-ending = "auto"
 [tool.flake8]
 max-line-length = 90
 extend-ignore = [
-    "E203",
-    "W503",
-    "WPS201",
-    "WPS110",
-    "WPS210",
-    "WPS211",
-    "WPS213",
-    "WPS226",
-    "WPS232",
-    "WPS231",
-    "WPS410",
-    "WPS412",
-    "WPS529",
+    "E203",   # whitespace before ':' - conflicts with ruff formatter
+    "W503",   # line break before binary operator - conflicts with PEP 8
+    "WPS201", # module with too many imports - necessary for MLflow integration
+    "WPS110", # wrong variable name (params, result, etc.) - these are standard names
+    "WPS210", # too many local variables - complexity is acceptable for core functions
+    "WPS211", # too many arguments - needed for MLflow save_model API compatibility
+    "WPS213", # too many expressions - complexity is acceptable for core functions
+    "WPS226", # string literal over-use - necessary for model_type checks
+    "WPS232", # module cognitive complexity - acceptable for PyFunc wrapper logic
+    "WPS231", # function cognitive complexity - acceptable for model loading logic
+    "WPS410", # wrong metadata variable: __all__ - this is standard Python practice
+    "WPS412", # __init__.py module with logic - false positive, only imports here
+    "WPS529", # implicit .get() dict usage - concise and readable pattern
 ]
 exclude = ["tests"]
