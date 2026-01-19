@@ -112,8 +112,10 @@ def save_model(
 
     if not hasattr(autogluon_model, "save"):
         raise MlflowException(
-            message=f"Model of type '{type(autogluon_model).__name__}' must have a 'save()' method. "
-            f"AutoGluon models typically have this method."
+            message=(
+                f"Model of type '{type(autogluon_model).__name__}' must have a 'save()' method. "
+                "AutoGluon models typically have this method."
+            )
         )
 
     path = Path(path).resolve()
