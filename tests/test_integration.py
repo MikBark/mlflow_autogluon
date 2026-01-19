@@ -65,7 +65,7 @@ def test_load_model_calls_tabular_predictor_load(mock_predictor):
         model_path.mkdir(parents=True, exist_ok=True)
 
         with patch(
-            "mlflow.artifacts.download_artifacts"
+            "mlflow_autogluon.autogluon.autogluon_impl.download_artifacts"
         ) as mock_download:
             mock_download.return_value = tmp
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -209,7 +210,7 @@ def log_model(
     """
     return Model.log(
         artifact_path=artifact_path,
-        flavor=__name__,
+        flavor=sys.modules[__name__],
         autogluon_model=autogluon_model,
         model_type=model_type,
         conda_env=conda_env,
