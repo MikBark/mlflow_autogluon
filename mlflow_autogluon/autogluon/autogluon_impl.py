@@ -15,11 +15,7 @@ from typing import Any, Optional, Union
 from mlflow.artifacts import download_artifacts
 from mlflow.exceptions import MlflowException
 from mlflow.models import Model
-from mlflow.models.model import MLMODEL_FILE_NAME
-try:
-    from mlflow.models import ModelInfo
-except ImportError:
-    from mlflow.models.utils import ModelInfo
+from mlflow.models.model import MLMODEL_FILE_NAME, ModelInfo
 from mlflow.protos.databricks_pb2 import INVALID_PARAMETER_VALUE
 from mlflow.utils.environment import _mlflow_conda_env
 
