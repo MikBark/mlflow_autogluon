@@ -28,10 +28,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "ruff>=0.1.0",
+    "mlflow-autogluon[test,lint]",
     "pre-commit>=3.0",
+]
+lint = [
+    "ruff>=0.1.0",
     "flake8>=7.0",
     "flake8-pyproject>=1.0",
     "wemake-python-styleguide>=1.0",

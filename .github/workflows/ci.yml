@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
-      - run: pip install ruff flake8 flake8-pyproject
+      - run: pip install -e ".[lint]"
       - run: ruff format --check mlflow_autogluon tests
       - run: ruff check mlflow_autogluon tests
       - run: flake8 mlflow_autogluon tests
