@@ -106,9 +106,13 @@ def save_model(
     """
     supported_types = ["tabular", "multimodal", "vision", "timeseries"]
     if model_type not in supported_types:
+        msg = (
+            f"Unsupported model_type '{model_type}'. "
+            f"Supported types: {supported_types}"
+        )
         raise MlflowException(
             invalid_parameter_value=INVALID_PARAMETER_VALUE,
-            message=(f"Unsupported model_type '{model_type}'. Supported types: {supported_types}"),
+            message=msg,
         )
 
     if not hasattr(autogluon_model, "save"):
