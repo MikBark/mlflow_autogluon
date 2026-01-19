@@ -71,7 +71,7 @@ def get_default_conda_env(
         pip_requirements = list(set(pip_requirements + additional_pip_requirements))
 
     return _mlflow_conda_env(
-        additional_pip_requirements=pip_requirements,
+        additional_pip_deps=pip_requirements,
         install_mlflow=False,
     )
 
