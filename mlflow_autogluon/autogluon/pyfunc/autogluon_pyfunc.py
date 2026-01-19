@@ -7,7 +7,7 @@ to be used with mlflow.pyfunc.load_model() for standardized inference.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import pandas as pd
 from mlflow.pyfunc import PythonModel
@@ -21,7 +21,7 @@ class _AutoGluonModelWrapper(PythonModel):
     and provides a standardized predict() interface that accepts pandas DataFrames.
     """
 
-    def __init__(self, path: Union[str, Path] = None, autogluon_model: Any = None):
+    def __init__(self, path: str | Path = None, autogluon_model: Any = None):
         """
         Initialize the wrapper.
 
@@ -55,9 +55,9 @@ class _AutoGluonModelWrapper(PythonModel):
     def predict(
         self,
         context: Any,
-        model_input: Union[pd.DataFrame, dict[str, Any]],
-        params: Optional[dict[str, Any]] = None,
-    ) -> Union[pd.DataFrame, dict[str, Any], list[Any]]:
+        model_input: pd.DataFrame | dict[str, Any],
+        params: dict[str, Any] | None = None,
+    ) -> pd.DataFrame | dict[str, Any] | list[Any]:
         """
         Generate predictions using the AutoGluon model.
 

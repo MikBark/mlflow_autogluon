@@ -10,7 +10,7 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from mlflow.artifacts import download_artifacts
 from mlflow.exceptions import MlflowException
@@ -53,7 +53,7 @@ def get_default_pip_requirements(
 
 def get_default_conda_env(
     model_type: str = "tabular",
-    additional_pip_requirements: Optional[list[str]] = None,
+    additional_pip_requirements: list[str] | None = None,
 ) -> dict[str, Any]:
     """
     Return default Conda environment for MLflow Models produced by this flavor.
@@ -77,13 +77,13 @@ def get_default_conda_env(
 
 
 def save_model(
-    autogluon_model: Union[Any, object],
+    autogluon_model: Any | object,
     path: str,
     model_type: str = "tabular",
-    mlflow_model: Optional[Model] = None,
-    conda_env: Optional[Union[dict, str]] = None,
-    pip_requirements: Optional[list[str]] = None,
-    extra_pip_requirements: Optional[list[str]] = None,
+    mlflow_model: Model | None = None,
+    conda_env: dict | str | None = None,
+    pip_requirements: list[str] | None = None,
+    extra_pip_requirements: list[str] | None = None,
     **kwargs: Any,
 ) -> None:
     """
@@ -178,15 +178,15 @@ def save_model(
 
 
 def log_model(
-    autogluon_model: Union[Any, object],
+    autogluon_model: Any | object,
     artifact_path: str,
     model_type: str = "tabular",
-    conda_env: Optional[Union[dict, str]] = None,
-    pip_requirements: Optional[list[str]] = None,
-    extra_pip_requirements: Optional[list[str]] = None,
-    registered_model_name: Optional[str] = None,
-    signature: Optional[Any] = None,
-    input_example: Optional[Any] = None,
+    conda_env: dict | str | None = None,
+    pip_requirements: list[str] | None = None,
+    extra_pip_requirements: list[str] | None = None,
+    registered_model_name: str | None = None,
+    signature: Any | None = None,
+    input_example: Any | None = None,
     **kwargs: Any,
 ) -> ModelInfo:
     """
@@ -209,7 +209,7 @@ def log_model(
     """
     return Model.log(
         artifact_path=artifact_path,
-        flavor=mlflow_autogluon.autogluon.autogluon_impl,
+        flavor=__name__,
         autogluon_model=autogluon_model,
         model_type=model_type,
         conda_env=conda_env,
@@ -222,8 +222,8 @@ def log_model(
 
 def load_model(
     model_uri: str,
-    dst_path: Optional[str] = None,
-) -> Union[Any, object]:
+    dst_path: str | None = None,
+) -> Any | object:
     """
     Load an AutoGluon model from MLflow.
 

@@ -2,7 +2,6 @@
 Test utilities for MLflow-AutoGluon tests.
 """
 
-import pandas as pd
 
 
 def get_model_fixtures(model_type: str, request):

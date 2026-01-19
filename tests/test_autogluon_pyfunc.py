@@ -3,7 +3,6 @@ PyFunc wrapper tests for AutoGluon integration.
 """
 
 import tempfile
-from pathlib import Path
 from unittest.mock import MagicMock, Mock
 
 import pandas as pd
