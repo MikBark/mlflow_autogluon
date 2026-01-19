@@ -111,6 +111,7 @@ def test_save_model_creates_model_subdirectory():
 def test_log_model_creates_run_if_none_exists():
     """Test that log_model creates a run if none exists (MLflow 3.x behavior)."""
     import mlflow
+
     from mlflow_autogluon import log_model
 
     class FakeModel:

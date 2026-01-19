@@ -81,6 +81,6 @@ def test_load_model_calls_tabular_predictor_load(mock_predictor):
 
         mock_predictor.load.return_value = MagicMock()
 
-        loaded = load_model(tmp)
+        load_model(tmp)
 
         mock_predictor.load.assert_called_once()
