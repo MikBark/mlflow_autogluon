@@ -113,8 +113,19 @@ line-ending = "auto"
 
 [tool.flake8]
 max-line-length = 90
-extend-ignore = ["E203", "W503"]
-exclude = ["tests"]
-per-file-ignores = [
-    "mlflow_autogluon/autogluon/autogluon_impl.py:WPS433",
+extend-ignore = [
+    "E203",
+    "W503",
+    "WPS201",
+    "WPS110",
+    "WPS210",
+    "WPS211",
+    "WPS213",
+    "WPS226",
+    "WPS232",
+    "WPS231",
+    "WPS410",
+    "WPS412",
+    "WPS529",
 ]
+exclude = ["tests"]

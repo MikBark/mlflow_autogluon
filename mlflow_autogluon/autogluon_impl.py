@@ -33,7 +33,8 @@ def get_default_pip_requirements(
     Return default pip requirements for MLflow Models produced by this flavor.
 
     Args:
-        model_type: Type of AutoGluon model ('tabular', 'multimodal', 'vision', 'timeseries')
+        model_type: Type of AutoGluon model
+            ('tabular', 'multimodal', 'vision', 'timeseries')
 
     Returns:
         List of pip requirement strings
@@ -107,14 +108,17 @@ def save_model(
     if model_type not in supported_types:
         raise MlflowException(
             invalid_parameter_value=INVALID_PARAMETER_VALUE,
-            message=f"Unsupported model_type '{model_type}'. Supported types: {supported_types}",
+            message=(
+                f"Unsupported model_type '{model_type}'. "
+                f"Supported types: {supported_types}"
+            ),
         )
 
     if not hasattr(autogluon_model, "save"):
         raise MlflowException(
             message=(
-                f"Model of type '{type(autogluon_model).__name__}' must have a 'save()' method. "
-                "AutoGluon models typically have this method."
+                f"Model of type '{type(autogluon_model).__name__}' must have a "
+                "'save()' method. AutoGluon models typically have this method."
             )
         )
 
