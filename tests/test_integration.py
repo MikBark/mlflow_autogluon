@@ -60,17 +60,27 @@ def test_load_model_calls_tabular_predictor_load(mock_predictor):
     from mlflow_autogluon import load_model
 
     with tempfile.TemporaryDirectory() as tmp:
+        # Create the necessary directory structure and MLmodel file
         Path(tmp).mkdir(parents=True, exist_ok=True)
         model_path = Path(tmp) / "model"
         model_path.mkdir(parents=True, exist_ok=True)
 
-        with patch(
-            "mlflow_autogluon.autogluon.autogluon_impl.download_artifacts"
-        ) as mock_download:
-            mock_download.return_value = tmp
+        # Create a minimal MLmodel file
+        import json
 
-            mock_predictor.load.return_value = MagicMock()
+        mlmodel_path = Path(tmp) / "MLmodel"
+        mlmodel_path.write_text(
+            json.dumps(
+                {
+                    "flavors": {
+                        "autogluon": {"model_type": "tabular"},
+                    }
+                }
+            )
+        )
 
-            load_model("runs:/123/model")
+        mock_predictor.load.return_value = MagicMock()
 
-            mock_predictor.load.assert_called()
+        loaded = load_model(tmp)
+
+        mock_predictor.load.assert_called_once()

@@ -132,4 +132,5 @@ def test_log_model_creates_run_if_none_exists():
         )
 
         assert model_info is not None
-        assert model_info.model_uri.startswith("runs:/")
+        # MLflow 3.x uses models:/ URI format
+        assert model_info.model_uri.startswith("models:/")
