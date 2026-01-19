@@ -1,5 +1,4 @@
-"""
-MLflow-AutoGluon: MLflow plugin for AutoGluon models.
+"""MLflow plugin for AutoGluon models.
 
 This package provides MLflow integration for AutoGluon models, enabling:
 - Model tracking and versioning

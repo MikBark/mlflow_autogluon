@@ -1,7 +1,7 @@
-"""
-MLflow integration for AutoGluon TabularPredictor.
+"""Core MLflow flavor implementation for AutoGluon models.
 
-This module provides the core MLflow flavor implementation for AutoGluon models.
+This module provides the save/log/load functionality for AutoGluon models
+in MLflow, supporting tabular, multimodal, vision, and timeseries predictors.
 """
 
 from __future__ import annotations
@@ -136,15 +136,10 @@ def save_model(
         predictor_metadata=kwargs.get("predictor_metadata", {}),
     )
 
-    from mlflow_autogluon.autogluon.pyfunc.autogluon_pyfunc import (
-        _AutoGluonModelWrapper,
-    )
-
     mlflow_model.add_flavor(
         "python_function",
         loader_module="mlflow_autogluon.autogluon.pyfunc",
         model_type=model_type,
-        python_model=_AutoGluonModelWrapper,
     )
 
     mlflow_model_file_path = path / MLMODEL_FILE_NAME

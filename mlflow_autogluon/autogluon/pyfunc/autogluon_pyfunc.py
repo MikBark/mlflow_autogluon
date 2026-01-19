@@ -1,5 +1,4 @@
-"""
-PyFunc wrapper for AutoGluon models.
+"""PyFunc wrapper for AutoGluon models.
 
 This module provides a PythonModel-based wrapper that enables AutoGluon models
 to be used with mlflow.pyfunc.load_model() for standardized inference.
