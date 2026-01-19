@@ -114,19 +114,19 @@ extend-ignore = [
     "W503",   # line break before binary operator - conflicts with PEP 8
     "WPS110", # wrong variable name (params, result, etc.) - these are standard mlflow names
 
-    # TODO @claude: ignore this rule only for save_model
+    # TODO: ignore this rule only for save_model
     "WPS211", # too many arguments - needed for MLflow save_model API compatibility
 
-    # TODO @claude: ignore this rule only for core functions
+    # TODO: ignore this rule only for core functions
     "WPS213", # too many expressions - complexity is acceptable for core functions
 
-    # TODO @claude: replace literal over-use with an enum. Let user use string as an argument still and delete the ignore rule
+    # TODO: replace literal over-use with an enum. Let user use string as an argument still and delete the ignore rule
     "WPS226", # string literal over-use - necessary for model_type checks
 
-    # TODO @claude: Decompose the wrapper and delete the ignore rule
+    # TODO: Decompose the wrapper and delete the ignore rule
     "WPS232", # module cognitive complexity - acceptable for PyFunc wrapper logic
 
-    # TODO @claude: decompose big functions
+    # TODO: decompose big functions
     "WPS231", # function cognitive complexity - acceptable for model loading logic
     "WPS210", # too many local variables - complexity is acceptable for core functions
 
