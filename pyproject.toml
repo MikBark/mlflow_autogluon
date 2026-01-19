@@ -1,0 +1,126 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlflow-autogluon"
+version = "0.1.0"
+description = "MLflow plugin for AutoGluon models"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "BSD-3-Clause"}
+keywords = ["machine-learning", "ai", "mlflow", "autogluon", "automl"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "mlflow>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.0",
+    "flake8>=7.0",
+    "flake8-pyproject>=1.0",
+    "wemake-python-styleguide>=1.0",
+    # AutoGluon packages for integration tests
+    "autogluon.tabular>=1.0.0",
+    "autogluon.multimodal>=1.0.0",
+    "autogluon.vision>=1.0.0",
+    "autogluon.timeseries>=1.0.0",
+    # Test data generation
+    "scikit-learn>=1.0.0",
+    "pillow>=9.0.0",
+]
+tabular = [
+    "autogluon.tabular>=1.0.0",
+]
+timeseries = [
+    "autogluon.timeseries>=1.0.0",
+]
+multimodal = [
+    "autogluon.multimodal>=1.0.0",
+]
+vision = [
+    "autogluon.vision>=1.0.0",
+]
+all = [
+    "mlflow-autogluon[tabular,timeseries,multimodal,vision]",
+]
+
+[project.entry-points."mlflow.plugin"]
+autogluon = "mlflow_autogluon"
+
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "examples*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+
+[tool.coverage.run]
+source = ["mlflow_autogluon"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["B011"]  # Allow assert in tests
+
+[tool.flake8]
+max-line-length = 100
+extend-ignore = ["E203", "W503"]
+per-file-ignores = [
+    "mlflow_autogluon/autogluon/autogluon_impl.py:WPS433",
+]
