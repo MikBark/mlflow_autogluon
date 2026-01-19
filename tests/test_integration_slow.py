@@ -13,7 +13,7 @@ import pytest
 
 import mlflow_autogluon
 
-from conftest import get_model_fixtures, get_model_predictions, get_pyfunc_input
+from tests.utils import get_model_fixtures, get_model_predictions, get_pyfunc_input
 
 
 @pytest.mark.slow
