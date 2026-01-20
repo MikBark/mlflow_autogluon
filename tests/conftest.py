@@ -1,6 +1,4 @@
-"""
-Pytest fixtures for MLflow-AutoGluon tests.
-"""
+"""Pytest fixtures for MLflow-AutoGluon tests."""
 
 import tempfile
 from pathlib import Path
@@ -8,42 +6,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-
-
-def get_model_fixtures(model_type: str, request):
-    """Get trained model and corresponding data fixture for model type."""
-    return (
-        request.getfixturevalue(f"trained_{model_type}_model"),
-        request.getfixturevalue(f"sample_{model_type}_data"),
-    )
-
-
-def get_model_predictions(model, model_type: str, data_fixture):
-    """Get predictions from model using appropriate input format."""
-    if model_type in ["tabular", "multimodal", "timeseries"]:
-        train_df, test_df, label = data_fixture
-        if model_type == "tabular":
-            return model.predict(test_df.drop(columns=[label]))
-        return model.predict(test_df)
-    else:
-        _, test_dir = data_fixture
-        return model.predict(str(test_dir))
-
-
-def get_pyfunc_input(model_type: str, data_fixture):
-    """Get input data for PyFunc prediction based on model type."""
-    if model_type == "tabular":
-        train_df, test_df, label = data_fixture
-        return test_df.drop(columns=[label])
-    elif model_type == "multimodal":
-        train_df, test_df, _ = data_fixture
-        return test_df
-    elif model_type == "vision":
-        _, test_dir = data_fixture
-        return test_dir
-    else:
-        train_df, test_df, _ = data_fixture
-        return test_df
 
 
 @pytest.fixture
@@ -62,11 +24,13 @@ def mlflow_tracking_uri(tmp_path):
 @pytest.fixture
 def sample_data():
     """Provide sample data for prediction tests."""
-    return pd.DataFrame({
-        "feature_0": [1.0, 2.0, 3.0],
-        "feature_1": [0.5, 1.5, 2.5],
-        "feature_2": [0.1, 0.2, 0.3],
-    })
+    return pd.DataFrame(
+        {
+            "feature_0": [1.0, 2.0, 3.0],
+            "feature_1": [0.5, 1.5, 2.5],
+            "feature_2": [0.1, 0.2, 0.3],
+        }
+    )
 
 
 @pytest.fixture
@@ -88,15 +52,19 @@ def sample_tabular_data():
 @pytest.fixture
 def sample_multimodal_data():
     """Generate small synthetic multimodal dataset."""
-    train_df = pd.DataFrame({
-        "text": ["positive"] * 40 + ["negative"] * 40,
-        "numerical": np.random.randn(80),
-        "label": [1] * 40 + [0] * 40,
-    })
-    test_df = pd.DataFrame({
-        "text": ["positive", "negative", "positive", "negative"],
-        "numerical": [0.5, -0.5, 0.3, -0.3],
-    })
+    train_df = pd.DataFrame(
+        {
+            "text": ["positive"] * 40 + ["negative"] * 40,
+            "numerical": np.random.randn(80),
+            "label": [1] * 40 + [0] * 40,
+        }
+    )
+    test_df = pd.DataFrame(
+        {
+            "text": ["positive", "negative", "positive", "negative"],
+            "numerical": [0.5, -0.5, 0.3, -0.3],
+        }
+    )
     return train_df, test_df, "label"
 
 
@@ -130,16 +98,20 @@ def sample_vision_data(tmp_path):
 @pytest.fixture
 def sample_timeseries_data():
     """Generate small synthetic timeseries dataset."""
-    train_df = pd.DataFrame({
-        "item_id": ["A"] * 48 + ["B"] * 48,
-        "timestamp": pd.date_range("2020-01-01", periods=48, freq="H").tolist() * 2,
-        "target": range(96),
-    })
-    test_df = pd.DataFrame({
-        "item_id": ["A", "B"],
-        "timestamp": [pd.Timestamp("2020-01-03"), pd.Timestamp("2020-01-03")],
-        "target": [np.nan, np.nan],
-    })
+    train_df = pd.DataFrame(
+        {
+            "item_id": ["A"] * 48 + ["B"] * 48,
+            "timestamp": pd.date_range("2020-01-01", periods=48, freq="H").tolist() * 2,
+            "target": range(96),
+        }
+    )
+    test_df = pd.DataFrame(
+        {
+            "item_id": ["A", "B"],
+            "timestamp": [pd.Timestamp("2020-01-03"), pd.Timestamp("2020-01-03")],
+            "target": [np.nan, np.nan],
+        }
+    )
     return train_df, test_df, "target"
 
 

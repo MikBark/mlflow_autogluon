@@ -1,5 +1,4 @@
-"""
-PyFunc wrapper for AutoGluon models.
+"""PyFunc wrapper for AutoGluon models.
 
 This module provides a PythonModel-based wrapper that enables AutoGluon models
 to be used with mlflow.pyfunc.load_model() for standardized inference.
@@ -8,21 +7,20 @@ to be used with mlflow.pyfunc.load_model() for standardized inference.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import pandas as pd
 from mlflow.pyfunc import PythonModel
 
 
 class _AutoGluonModelWrapper(PythonModel):
-    """
-    PyFunc wrapper for AutoGluon models.
+    """PyFunc wrapper for AutoGluon models.
 
     This wrapper enables AutoGluon models to be loaded via mlflow.pyfunc.load_model()
     and provides a standardized predict() interface that accepts pandas DataFrames.
     """
 
-    def __init__(self, path: Union[str, Path] = None, autogluon_model: Any = None):
+    def __init__(self, path: str | Path = None, autogluon_model: Any = None):
         """
         Initialize the wrapper.
 
@@ -48,7 +46,7 @@ class _AutoGluonModelWrapper(PythonModel):
             context: MLflow context containing artifact path
         """
         if self._model is None:
-            from mlflow_autogluon.autogluon.autogluon_impl import load_model
+            from mlflow_autogluon.autogluon_impl import load_model
 
             model_path = getattr(context, "artifacts", self._model_path)
             self._model = load_model(model_path)
@@ -56,9 +54,9 @@ class _AutoGluonModelWrapper(PythonModel):
     def predict(
         self,
         context: Any,
-        model_input: Union[pd.DataFrame, dict[str, Any]],
-        params: Optional[dict[str, Any]] = None,
-    ) -> Union[pd.DataFrame, dict[str, Any], list[Any]]:
+        model_input: pd.DataFrame | dict[str, Any],
+        params: dict[str, Any] | None = None,
+    ) -> pd.DataFrame | dict[str, Any] | list[Any]:
         """
         Generate predictions using the AutoGluon model.
 
@@ -95,20 +93,20 @@ class _AutoGluonModelWrapper(PythonModel):
             model_input = pd.DataFrame(model_input)
 
         if predict_method == "predict":
-            result = self._model.predict(model_input)
+            output = self._model.predict(model_input)
         elif predict_method == "predict_proba":
             if not hasattr(self._model, "predict_proba"):
                 raise ValueError(
                     f"Model {type(self._model).__name__} does not support predict_proba"
                 )
             as_multiclass = params.get("as_multiclass", False)
-            result = self._model.predict_proba(model_input, as_multiclass=as_multiclass)
+            output = self._model.predict_proba(model_input, as_multiclass=as_multiclass)
         elif predict_method == "predict_multi":
             if not hasattr(self._model, "predict_multi"):
                 raise ValueError(
                     f"Model {type(self._model).__name__} does not support predict_multi"
                 )
-            result = self._model.predict_multi(model_input)
+            output = self._model.predict_multi(model_input)
         else:
             raise ValueError(
                 f"Invalid predict_method '{predict_method}'. "
@@ -116,7 +114,7 @@ class _AutoGluonModelWrapper(PythonModel):
             )
 
         as_pandas = params.get("as_pandas", True)
-        if not as_pandas and isinstance(result, pd.DataFrame):
-            return result.to_dict(orient="records")
+        if not as_pandas and isinstance(output, pd.DataFrame):
+            return output.to_dict(orient="records")
 
-        return result
+        return output

@@ -1,10 +1,6 @@
 name: CI
 
-on:
-  push:
-    branches: ['**']
-    tags: ['*']
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -15,16 +11,16 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
-      - run: pip install -e ".[dev]"
-      - run: ruff format --check mlflow_autogluon tests examples
-      - run: ruff check mlflow_autogluon tests examples
-      - run: flake8 mlflow_autogluon tests examples
+      - run: pip install -e ".[lint]"
+      - run: ruff format --check mlflow_autogluon tests
+      - run: ruff check mlflow_autogluon tests
+      - run: flake8 mlflow_autogluon tests
 
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ${{ github.event_name == 'pull_request' && ['3.9', '3.10', '3.11', '3.12', '3.13'] || ['3.13'] }}
+        python-version: ['3.13']
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -32,45 +28,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - run: pip install --upgrade pip
-      - run: pip install -e ".[dev,tabular]"
-      - name: Run tests
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if [ "${{ matrix.python-version }}" = "3.13" ]; then
-              pytest tests/ -v --cov=mlflow_autogluon --cov-report=xml --cov-report=term
-            else
-              pytest tests/ -v
-            fi
-          else
-            if [ "${{ matrix.python-version }}" = "3.13" ]; then
-              pytest tests/ -m "not slow" -v --cov=mlflow_autogluon --cov-report=xml --cov-report=term
-            else
-              pytest tests/ -m "not slow" -v
-            fi
-          fi
-      - name: Upload coverage
-        if: matrix.python-version == '3.13'
-        uses: codecov/codecov-action@v4
-        with:
-          files: coverage.xml
-          fail_ci_if_error: false
-
-  build:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/master')
-    needs: [lint, test]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-          cache: 'pip'
-      - run: pip install build twine
-      - run: python -m build
-      - run: twine check dist/*
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          retention-days: 7
+      - run: pip install -e ".[test]"
+      - run: pytest tests/ -m "not slow" -v

@@ -5,15 +5,12 @@ These tests train actual models and test the full MLflow lifecycle.
 Marked with @pytest.mark.slow for opt-out in CI/CD.
 """
 
-from pathlib import Path
-
 import mlflow
-from mlflow.pyfunc import load_model as load_pyfunc
 import pytest
+from mlflow.pyfunc import load_model as load_pyfunc
 
 import mlflow_autogluon
-
-from conftest import get_model_fixtures, get_model_predictions, get_pyfunc_input
+from tests.utils import get_model_fixtures, get_model_predictions, get_pyfunc_input
 
 
 @pytest.mark.slow

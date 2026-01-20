@@ -108,17 +108,30 @@ def test_save_model_creates_model_subdirectory():
         assert model_subpath.exists()
 
 
-def test_log_model_requires_active_run():
-    """Test that log_model requires an active MLflow run."""
-    from mlflow.exceptions import MlflowException
+def test_log_model_creates_run_if_none_exists():
+    """Test that log_model creates a run if none exists (MLflow 3.x behavior)."""
+    import mlflow
+
+    from mlflow_autogluon import log_model
 
     class FakeModel:
         def save(self, path):
             Path(path).mkdir(parents=True, exist_ok=True)
 
-    with pytest.raises(MlflowException):
-        save_model(
+    # Ensure no active run
+    mlflow.end_run()
+
+    # In MLflow 3.x, log_model auto-creates a run if none exists
+    with tempfile.TemporaryDirectory() as tmp:
+        tracking_uri = f"file://{tmp}/mlruns"
+        mlflow.set_tracking_uri(tracking_uri)
+
+        model_info = log_model(
             autogluon_model=FakeModel(),
-            path="some_path",
+            artifact_path="model",
             model_type="tabular",
         )
+
+        assert model_info is not None
+        # MLflow 3.x uses models:/ URI format
+        assert model_info.model_uri.startswith("models:/")

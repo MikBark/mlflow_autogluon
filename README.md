@@ -87,4 +87,4 @@ Log an AutoGluon model as an MLflow artifact.
 
 Load an AutoGluon model from MLflow.
 
-- `model_uri`: URI pointing to the model (e.g., 'runs:/<run_id>/model')
+- `model_uri`: URI pointing to the model (e.g., 'runs:/<run_id>/model').

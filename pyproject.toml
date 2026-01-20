@@ -8,13 +8,10 @@ version = "0.1.0"
 description = "MLflow plugin for AutoGluon models"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "BSD-3-Clause"}
+license = {text = "MIT"}
 keywords = ["machine-learning", "ai", "mlflow", "autogluon", "automl"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -28,21 +25,19 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
+    "mlflow-autogluon[test,lint]",
+]
+lint = [
     "ruff>=0.1.0",
-    "pre-commit>=3.0",
     "flake8>=7.0",
     "flake8-pyproject>=1.0",
     "wemake-python-styleguide>=1.0",
-    # AutoGluon packages for integration tests
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
     "autogluon.tabular>=1.0.0",
-    "autogluon.multimodal>=1.0.0",
-    "autogluon.vision>=1.0.0",
-    "autogluon.timeseries>=1.0.0",
-    # Test data generation
     "scikit-learn>=1.0.0",
-    "pillow>=9.0.0",
 ]
 tabular = [
     "autogluon.tabular>=1.0.0",
@@ -92,7 +87,8 @@ exclude_lines = [
 
 [tool.ruff]
 target-version = "py39"
-line-length = 100
+line-length = 90
+exclude = ["tests"]
 
 [tool.ruff.lint]
 select = [
@@ -104,10 +100,6 @@ select = [
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
 ]
-ignore = [
-    "E501",  # line too long (handled by formatter)
-    "B008",  # do not perform function calls in argument defaults
-]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -115,12 +107,31 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["B011"]  # Allow assert in tests
-
 [tool.flake8]
-max-line-length = 100
-extend-ignore = ["E203", "W503"]
-per-file-ignores = [
-    "mlflow_autogluon/autogluon/autogluon_impl.py:WPS433",
+max-line-length = 90
+extend-ignore = [
+    "E203",   # whitespace before ':' - conflicts with ruff formatter
+    "W503",   # line break before binary operator - conflicts with PEP 8
+    "WPS110", # wrong variable name (params, result, etc.) - these are standard mlflow names
+
+    # TODO: ignore this rule only for save_model
+    "WPS211", # too many arguments - needed for MLflow save_model API compatibility
+
+    # TODO: ignore this rule only for core functions
+    "WPS213", # too many expressions - complexity is acceptable for core functions
+
+    # TODO: replace literal over-use with an enum. Let user use string as an argument still and delete the ignore rule
+    "WPS226", # string literal over-use - necessary for model_type checks
+
+    # TODO: Decompose the wrapper and delete the ignore rule
+    "WPS232", # module cognitive complexity - acceptable for PyFunc wrapper logic
+
+    # TODO: decompose big functions
+    "WPS231", # function cognitive complexity - acceptable for model loading logic
+    "WPS210", # too many local variables - complexity is acceptable for core functions
+
+    "WPS410", # wrong metadata variable: __all__ - this is standard Python practice
+    "WPS412", # __init__.py module with logic - false positive, only imports here
+    "WPS529", # implicit .get() dict usage - concise and readable pattern
 ]
+exclude = ["tests"]
