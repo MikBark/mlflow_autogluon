@@ -39,20 +39,18 @@ def test_get_default_conda_env():
 
 def test_save_model_invalid_type():
     """Test save_model with invalid model type."""
-    from mlflow.exceptions import MlflowException
 
     class FakeModel:
         def save(self, path):
             pass
 
     with tempfile.TemporaryDirectory() as tmp:
-        with pytest.raises(MlflowException) as exc_info:
+        with pytest.raises(ValueError, match="Unsupported model_type"):
             save_model(
                 autogluon_model=FakeModel(),
                 path=tmp,
                 model_type="invalid_type",
             )
-        assert "Unsupported model_type" in str(exc_info.value)
 
 
 def test_save_model_without_save_method():
