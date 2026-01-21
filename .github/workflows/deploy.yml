@@ -27,17 +27,12 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
           cache: 'pip'
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
       - run: pip install -e ".[lint]"
       - run: ruff format --check mlflow_autogluon tests
       - run: ruff check mlflow_autogluon tests
@@ -45,7 +40,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: build
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
@@ -56,10 +50,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
       - run: pip install -e ".[test]"
       - run: pytest tests/ -m "not slow" -v
 
