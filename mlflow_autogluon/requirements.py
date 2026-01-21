@@ -1,12 +1,16 @@
 """Dependency and environment configuration for AutoGluon MLflow flavor."""
 
+from __future__ import annotations
+
 from typing import Any
 
 from mlflow.utils.environment import _mlflow_conda_env
 
+from mlflow_autogluon.domain.model_type import ModelType
+
 
 def get_default_pip_requirements(
-    model_type: str = "tabular",
+    model_type: str | ModelType = "tabular",
 ) -> list[str]:
     """
     Return default pip requirements for MLflow Models produced by this flavor.
@@ -18,22 +22,15 @@ def get_default_pip_requirements(
     Returns:
         List of pip requirement strings
     """
-    requirements = ["autogluon"]
+    if isinstance(model_type, str):
+        model_type = ModelType.from_string(model_type)
 
-    if model_type == "tabular":
-        requirements.append("autogluon.tabular")
-    elif model_type == "multimodal":
-        requirements.append("autogluon.multimodal")
-    elif model_type == "vision":
-        requirements.append("autogluon.vision")
-    elif model_type == "timeseries":
-        requirements.append("autogluon.timeseries")
-
+    requirements = ["autogluon", model_type.package_name]
     return requirements
 
 
 def get_default_conda_env(
-    model_type: str = "tabular",
+    model_type: str | ModelType = "tabular",
     additional_pip_requirements: list[str] | None = None,
 ) -> dict[str, Any]:
     """

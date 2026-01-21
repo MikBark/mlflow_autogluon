@@ -109,27 +109,14 @@ line-ending = "auto"
 
 [tool.flake8]
 max-line-length = 90
+max-local-variables = 7
+max-arguments = 12
 extend-ignore = [
     "E203",   # whitespace before ':' - conflicts with ruff formatter
     "W503",   # line break before binary operator - conflicts with PEP 8
     "WPS110", # wrong variable name (params, result, etc.) - these are standard mlflow names
-
-    # TODO: ignore this rule only for save_model
-    "WPS211", # too many arguments - needed for MLflow save_model API compatibility
-
-    # TODO: ignore this rule only for core functions
-    "WPS213", # too many expressions - complexity is acceptable for core functions
-
-    # TODO: replace literal over-use with an enum. Let user use string as an argument still and delete the ignore rule
-    "WPS226", # string literal over-use - necessary for model_type checks
-
-    # TODO: Decompose the wrapper and delete the ignore rule
-    "WPS232", # module cognitive complexity - acceptable for PyFunc wrapper logic
-
-    # TODO: decompose big functions
-    "WPS231", # function cognitive complexity - acceptable for model loading logic
-    "WPS210", # too many local variables - complexity is acceptable for core functions
-
+    "WPS111", # short enum iteration variable 'm' - standard convention
+    "WPS407", # mutable module constants with type annotations - acceptable pattern
     "WPS410", # wrong metadata variable: __all__ - this is standard Python practice
     "WPS412", # __init__.py module with logic - false positive, only imports here
     "WPS529", # implicit .get() dict usage - concise and readable pattern

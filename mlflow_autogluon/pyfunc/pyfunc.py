@@ -12,6 +12,10 @@ from typing import Any
 import pandas as pd
 from mlflow.pyfunc import PythonModel
 
+from mlflow_autogluon.domain.predict_method import PredictMethod
+from mlflow_autogluon.pyfunc.input_parser import parse_input
+from mlflow_autogluon.pyfunc.output_formatter import format_output
+
 
 class _AutoGluonModelWrapper(PythonModel):
     """PyFunc wrapper for AutoGluon models.
@@ -46,7 +50,7 @@ class _AutoGluonModelWrapper(PythonModel):
             context: MLflow context containing artifact path
         """
         if self._model is None:
-            from mlflow_autogluon.autogluon_impl import load_model
+            from mlflow_autogluon.load import load_model
 
             model_path = getattr(context, "artifacts", self._model_path)
             self._model = load_model(model_path)
@@ -77,44 +81,39 @@ class _AutoGluonModelWrapper(PythonModel):
         if self._model is None:
             self.load_context(context)
 
-        if params is None:
-            params = {}
+        params = params or {}
 
-        predict_method = params.get("predict_method", "predict")
+        parsed_input = parse_input(model_input)
+        method = PredictMethod.from_string(params.get("predict_method", "predict"))
+        output = self._execute_prediction(parsed_input, method, params)
 
-        if isinstance(model_input, dict):
-            if "dataframe_split" in model_input:
-                model_input = pd.DataFrame(**model_input["dataframe_split"])
-            elif "dataframe_records" in model_input:
-                model_input = pd.DataFrame(model_input["dataframe_records"])
-            else:
-                model_input = pd.DataFrame(model_input)
-        elif not isinstance(model_input, pd.DataFrame):
-            model_input = pd.DataFrame(model_input)
+        return format_output(output, params.get("as_pandas", True))
 
-        if predict_method == "predict":
-            output = self._model.predict(model_input)
-        elif predict_method == "predict_proba":
-            if not hasattr(self._model, "predict_proba"):
-                raise ValueError(
-                    f"Model {type(self._model).__name__} does not support predict_proba"
-                )
+    def _execute_prediction(
+        self,
+        model_input: pd.DataFrame,
+        method: PredictMethod,
+        params: dict[str, Any],
+    ) -> Any:
+        """Execute prediction using the specified method.
+
+        Args:
+            model_input: Parsed input DataFrame
+            method: Prediction method to use
+            params: Additional prediction parameters
+
+        Returns:
+            Prediction output
+
+        Raises:
+            ValueError: If method is not supported by the model
+        """
+        method.validate_capability(self._model)
+
+        if method == PredictMethod.PREDICT:
+            return self._model.predict(model_input)
+        elif method == PredictMethod.PREDICT_PROBA:
             as_multiclass = params.get("as_multiclass", False)
-            output = self._model.predict_proba(model_input, as_multiclass=as_multiclass)
-        elif predict_method == "predict_multi":
-            if not hasattr(self._model, "predict_multi"):
-                raise ValueError(
-                    f"Model {type(self._model).__name__} does not support predict_multi"
-                )
-            output = self._model.predict_multi(model_input)
+            return self._model.predict_proba(model_input, as_multiclass=as_multiclass)
         else:
-            raise ValueError(
-                f"Invalid predict_method '{predict_method}'. "
-                f"Supported: 'predict', 'predict_proba', 'predict_multi'"
-            )
-
-        as_pandas = params.get("as_pandas", True)
-        if not as_pandas and isinstance(output, pd.DataFrame):
-            return output.to_dict(orient="records")
-
-        return output
+            return self._model.predict_multi(model_input)
