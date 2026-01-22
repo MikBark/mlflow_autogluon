@@ -12,14 +12,13 @@ from mlflow_autogluon.constants import (
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
 )
-from mlflow_autogluon.domain.model_type import ModelType
-from mlflow_autogluon.domain.predictor_loader import get_loader
+from mlflow_autogluon.predict_methods import get_model_loader
 
 
 def load_model(
     model_uri: str,
     dst_path: str | None = None,
-) -> Any | object:
+) -> Any | object:  # noqa: WPS210,WPS211
     """
     Load an AutoGluon model from MLflow.
 
@@ -31,7 +30,7 @@ def load_model(
         Loaded AutoGluon model instance
 
     Raises:
-        MlflowException: If model cannot be loaded or flavor configuration is invalid
+        ValueError: If model cannot be loaded or flavor configuration is invalid
     """
     local_model_path = download_artifacts(artifact_uri=model_uri, dst_path=dst_path)
 
@@ -39,14 +38,12 @@ def load_model(
 
     flavor_conf = model.flavors[FLAVOR_NAME]
 
-    model_type = ModelType.from_string(
-        flavor_conf.get("model_type", ModelType.TABULAR.value)
-    )
+    model_type = flavor_conf.get("model_type", "tabular")
 
     autogluon_model_path = os.path.join(local_model_path, AUTODEPLOY_SUBPATH)
 
-    loader = get_loader(model_type)
-    return loader.load(autogluon_model_path)
+    loader = get_model_loader(model_type)
+    return loader(autogluon_model_path)
 
 
 def _load_pyfunc(path: str) -> Any:

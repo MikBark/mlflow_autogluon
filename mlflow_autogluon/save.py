@@ -16,15 +16,16 @@ from mlflow_autogluon.constants import (
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
 )
-from mlflow_autogluon.domain.model_type import ModelType
-from mlflow_autogluon.domain.save_config import SaveConfig
+from mlflow_autogluon.predict_methods import ModelTypeLiteral
 from mlflow_autogluon.requirements import get_default_conda_env
 
+_SUPPORTED_MODEL_TYPES = ["tabular", "multimodal", "vision", "timeseries"]
 
-def save_model(
+
+def save_model(  # noqa: WPS211,WPS213
     autogluon_model: Any | object,
     path: str,
-    model_type: str = "tabular",
+    model_type: ModelTypeLiteral = "tabular",
     mlflow_model: Model | None = None,
     conda_env: dict | str | None = None,
     pip_requirements: list[str] | None = None,
@@ -47,29 +48,34 @@ def save_model(
     Raises:
         MlflowException: If model_type is not supported or model lacks save() method
     """
-    config = SaveConfig.create(
-        model_type=model_type,
-        conda_env=conda_env,
-        pip_requirements=pip_requirements,
-        extra_pip_requirements=extra_pip_requirements,
-        autogluon_version=kwargs.get("autogluon_version"),
-        predictor_metadata=kwargs.get("predictor_metadata", {}),
+    if model_type not in _SUPPORTED_MODEL_TYPES:
+        raise MlflowException(
+            message=(
+                f"Unsupported model_type '{model_type}'. "
+                f"Supported: {_SUPPORTED_MODEL_TYPES}"
+            )
+        )
+
+    _validate_model(autogluon_model)
+    path = _prepare_save_path(path)
+    mlflow_model = _configure_mlflow_model(
+        mlflow_model,
+        path,
+        model_type,
+        conda_env,
+        extra_pip_requirements,
+        kwargs,
     )
 
-    _validate_model(autogluon_model, config.model_type)
-    path = _prepare_save_path(path)
-    mlflow_model = _configure_mlflow_model(mlflow_model, path, config)
-
-    _save_autogluon_model(autogluon_model, path, config.model_type)
-    _write_metadata(autogluon_model, path, config.model_type)
+    _save_autogluon_model(autogluon_model, path, model_type)
+    _write_metadata(autogluon_model, path, model_type)
 
 
-def _validate_model(model: Any | object, model_type: ModelType) -> None:
+def _validate_model(model: Any | object) -> None:
     """Validate that the model has required capabilities.
 
     Args:
         model: AutoGluon model instance
-        model_type: Type of AutoGluon model
 
     Raises:
         MlflowException: If model lacks save() method
@@ -100,14 +106,20 @@ def _prepare_save_path(path: str) -> Path:
 def _configure_mlflow_model(
     mlflow_model: Model | None,
     path: Path,
-    config: SaveConfig,
+    model_type: str,
+    conda_env: dict | str | None,
+    extra_pip_requirements: list[str] | None,
+    kwargs: dict[str, Any],
 ) -> Model:
     """Configure MLflow model with flavors and save MLmodel file.
 
     Args:
         mlflow_model: Existing MLflow model or None
         path: Path where model is being saved
-        config: Save configuration
+        model_type: Type of AutoGluon model
+        conda_env: Conda environment
+        extra_pip_requirements: Extra pip requirements
+        kwargs: Additional arguments
 
     Returns:
         Configured MLflow Model instance
@@ -115,26 +127,25 @@ def _configure_mlflow_model(
     if mlflow_model is None:
         mlflow_model = Model()
 
-    conda_env = config.conda_env
     if conda_env is None:
         conda_env = get_default_conda_env(
-            model_type=config.model_type.value,
-            additional_pip_requirements=config.extra_pip_requirements,
+            model_type=model_type,
+            additional_pip_requirements=extra_pip_requirements,
         )
     elif isinstance(conda_env, str):
         conda_env = json.loads(Path(conda_env).read_text())
 
     mlflow_model.add_flavor(
         FLAVOR_NAME,
-        model_type=config.model_type.value,
-        autogluon_version=config.autogluon_version,
-        predictor_metadata=config.predictor_metadata,
+        model_type=model_type,
+        autogluon_version=kwargs.get("autogluon_version"),
+        predictor_metadata=kwargs.get("predictor_metadata", {}),
     )
 
     mlflow_model.add_flavor(
         "python_function",
         loader_module="mlflow_autogluon.pyfunc",
-        model_type=config.model_type.value,
+        model_type=model_type,
     )
 
     mlflow_model_file_path = path / MLMODEL_FILE_NAME
@@ -146,7 +157,7 @@ def _configure_mlflow_model(
 def _save_autogluon_model(
     autogluon_model: Any | object,
     path: Path,
-    model_type: ModelType,
+    model_type: str,
 ) -> None:
     """Save the AutoGluon model to the specified path.
 
@@ -157,7 +168,7 @@ def _save_autogluon_model(
     """
     autogluon_model_path = path / AUTODEPLOY_SUBPATH
 
-    if model_type == ModelType.TABULAR:
+    if model_type == "tabular":
         _save_tabular_model(autogluon_model, autogluon_model_path)
     else:
         autogluon_model.save(str(autogluon_model_path))
@@ -193,7 +204,7 @@ def _save_tabular_model(
 def _write_metadata(
     autogluon_model: Any | object,
     path: Path,
-    model_type: ModelType,
+    model_type: str,
 ) -> None:
     """Write model metadata to JSON file.
 
@@ -203,12 +214,12 @@ def _write_metadata(
         model_type: Type of AutoGluon model
     """
     metadata = {
-        "model_type": model_type.value,
+        "model_type": model_type,
         "model_class": type(autogluon_model).__name__,
         "model_module": type(autogluon_model).__module__,
     }
 
-    if model_type == ModelType.TABULAR and hasattr(autogluon_model, "predict"):
+    if model_type == "tabular" and hasattr(autogluon_model, "predict"):
         metadata["supports_predict_proba"] = hasattr(autogluon_model, "predict_proba")
 
     metadata_file_path = path / AUTODEPLOY_METADATA_FILE

@@ -12,9 +12,11 @@ from typing import Any
 import pandas as pd
 from mlflow.pyfunc import PythonModel
 
-from mlflow_autogluon.domain.predict_method import PredictMethod
+from mlflow_autogluon.predict_methods import PredictMethodLiteral
 from mlflow_autogluon.pyfunc.input_parser import parse_input
 from mlflow_autogluon.pyfunc.output_formatter import format_output
+
+_SUPPORTED_PREDICT_METHODS = ["predict", "predict_proba", "predict_multi"]
 
 
 class _AutoGluonModelWrapper(PythonModel):
@@ -84,15 +86,22 @@ class _AutoGluonModelWrapper(PythonModel):
         params = params or {}
 
         parsed_input = parse_input(model_input)
-        method = PredictMethod.from_string(params.get("predict_method", "predict"))
-        output = self._execute_prediction(parsed_input, method, params)
+        method_str = params.get("predict_method", "predict")
+
+        if method_str not in _SUPPORTED_PREDICT_METHODS:
+            raise ValueError(
+                f"Invalid predict_method '{method_str}'. "
+                f"Supported: {_SUPPORTED_PREDICT_METHODS}"
+            )
+
+        output = self._execute_prediction(parsed_input, method_str, params)
 
         return format_output(output, params.get("as_pandas", True))
 
     def _execute_prediction(
         self,
         model_input: pd.DataFrame,
-        method: PredictMethod,
+        method: PredictMethodLiteral,
         params: dict[str, Any],
     ) -> Any:
         """Execute prediction using the specified method.
@@ -108,12 +117,18 @@ class _AutoGluonModelWrapper(PythonModel):
         Raises:
             ValueError: If method is not supported by the model
         """
-        method.validate_capability(self._model)
+        if method == "predict_proba" and not hasattr(self._model, "predict_proba"):
+            raise ValueError(
+                f"Model {type(self._model).__name__} does not support predict_proba"
+            )
+        if method == "predict_multi" and not hasattr(self._model, "predict_multi"):
+            raise ValueError(
+                f"Model {type(self._model).__name__} does not support predict_multi"
+            )
 
-        if method == PredictMethod.PREDICT:
+        if method == "predict":
             return self._model.predict(model_input)
-        elif method == PredictMethod.PREDICT_PROBA:
+        if method == "predict_proba":
             as_multiclass = params.get("as_multiclass", False)
             return self._model.predict_proba(model_input, as_multiclass=as_multiclass)
-        else:
-            return self._model.predict_multi(model_input)
+        return self._model.predict_multi(model_input)

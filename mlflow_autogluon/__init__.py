@@ -8,7 +8,6 @@ This package provides MLflow integration for AutoGluon models, enabling:
 """
 
 from mlflow_autogluon.constants import FLAVOR_NAME
-from mlflow_autogluon.domain import ModelType, PredictMethod, SaveConfig
 from mlflow_autogluon.load import load_model
 from mlflow_autogluon.log import log_model
 from mlflow_autogluon.requirements import (
@@ -19,9 +18,6 @@ from mlflow_autogluon.save import save_model
 
 __all__ = [
     "FLAVOR_NAME",
-    "ModelType",
-    "PredictMethod",
-    "SaveConfig",
     "save_model",
     "log_model",
     "load_model",

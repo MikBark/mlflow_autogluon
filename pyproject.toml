@@ -109,13 +109,14 @@ line-ending = "auto"
 
 [tool.flake8]
 max-line-length = 90
-max-local-variables = 7
-max-arguments = 12
+max-local-variables = 9
+max-arguments = 7
 extend-ignore = [
     "E203",   # whitespace before ':' - conflicts with ruff formatter
     "W503",   # line break before binary operator - conflicts with PEP 8
     "WPS110", # wrong variable name (params, result, etc.) - these are standard mlflow names
-    "WPS111", # short enum iteration variable 'm' - standard convention
+    "WPS111", # short variable 't' in enum iteration - standard convention
+    "WPS226", # string literal over-use - model type strings used throughout
     "WPS407", # mutable module constants with type annotations - acceptable pattern
     "WPS410", # wrong metadata variable: __all__ - this is standard Python practice
     "WPS412", # __init__.py module with logic - false positive, only imports here

@@ -6,11 +6,18 @@ from typing import Any
 
 from mlflow.utils.environment import _mlflow_conda_env
 
-from mlflow_autogluon.domain.model_type import ModelType
+from mlflow_autogluon.predict_methods import ModelTypeLiteral
+
+_MODEL_PACKAGES: dict[str, str] = {
+    "tabular": "autogluon.tabular",
+    "multimodal": "autogluon.multimodal",
+    "vision": "autogluon.vision",
+    "timeseries": "autogluon.timeseries",
+}
 
 
 def get_default_pip_requirements(
-    model_type: str | ModelType = "tabular",
+    model_type: ModelTypeLiteral = "tabular",
 ) -> list[str]:
     """
     Return default pip requirements for MLflow Models produced by this flavor.
@@ -22,15 +29,11 @@ def get_default_pip_requirements(
     Returns:
         List of pip requirement strings
     """
-    if isinstance(model_type, str):
-        model_type = ModelType.from_string(model_type)
-
-    requirements = ["autogluon", model_type.package_name]
-    return requirements
+    return ["autogluon", _MODEL_PACKAGES[model_type]]
 
 
 def get_default_conda_env(
-    model_type: str | ModelType = "tabular",
+    model_type: ModelTypeLiteral = "tabular",
     additional_pip_requirements: list[str] | None = None,
 ) -> dict[str, Any]:
     """
