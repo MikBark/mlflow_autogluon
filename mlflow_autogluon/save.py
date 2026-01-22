@@ -22,7 +22,7 @@ from mlflow_autogluon.requirements import get_default_conda_env
 _SUPPORTED_MODEL_TYPES = ['tabular', 'multimodal', 'vision', 'timeseries']
 
 
-def save_model(  # noqa: WPS211,WPS213
+def save_model(  # noqa: WPS201,WPS211,WPS213
     autogluon_model: Any | object,
     path: str,
     model_type: ModelTypeLiteral = 'tabular',

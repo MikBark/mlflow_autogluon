@@ -10,10 +10,8 @@ This package provides MLflow integration for AutoGluon models, enabling:
 from mlflow_autogluon.constants import FLAVOR_NAME
 from mlflow_autogluon.load import load_model
 from mlflow_autogluon.log import log_model
-from mlflow_autogluon.requirements import (
-    get_default_conda_env,
-    get_default_pip_requirements,
-)
+from mlflow_autogluon.requirements import get_default_conda_env
+from mlflow_autogluon.requirements import get_default_pip_requirements
 from mlflow_autogluon.save import save_model
 
 __all__ = [

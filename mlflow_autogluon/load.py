@@ -8,10 +8,8 @@ from typing import Any
 from mlflow.artifacts import download_artifacts
 from mlflow.models import Model
 
-from mlflow_autogluon.constants import (
-    AUTODEPLOY_SUBPATH,
-    FLAVOR_NAME,
-)
+from mlflow_autogluon.constants import AUTODEPLOY_SUBPATH
+from mlflow_autogluon.constants import FLAVOR_NAME
 from mlflow_autogluon.predict_methods import get_model_loader
 
 
