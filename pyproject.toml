@@ -119,6 +119,7 @@ extend-ignore = [
     "WPS226", # string literal over-use - model type strings used throughout
     "WPS305", # f-strings - modern Python standard
     "WPS326", # implicit string concatenation - readable pattern
+    # TODO: Make all constants immutable and delete ignore rule
     "WPS407", # mutable module constants - acceptable pattern
     "WPS410", # wrong metadata variable: __all__ - standard Python practice
     "WPS412", # __init__.py module with logic - only imports here
