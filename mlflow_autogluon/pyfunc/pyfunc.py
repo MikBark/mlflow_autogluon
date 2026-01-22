@@ -118,13 +118,11 @@ class _AutoGluonModelWrapper(PythonModel):
             ValueError: If method is not supported by the model
         """
         if method == 'predict_proba' and not hasattr(self._model, 'predict_proba'):
-            raise ValueError(
-                f'Model {type(self._model).__name__} does not support predict_proba',
-            )
+            model_name = type(self._model).__name__
+            raise ValueError(f'Model {model_name} does not support predict_proba')
         if method == 'predict_multi' and not hasattr(self._model, 'predict_multi'):
-            raise ValueError(
-                f'Model {type(self._model).__name__} does not support predict_multi',
-            )
+            model_name = type(self._model).__name__
+            raise ValueError(f'Model {model_name} does not support predict_multi')
 
         if method == 'predict':
             return self._model.predict(model_input)

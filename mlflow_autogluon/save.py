@@ -81,9 +81,10 @@ def _validate_model(model: Any | object) -> None:
         MlflowException: If model lacks save() method
     """
     if not hasattr(model, 'save'):
+        model_type_name = type(model).__name__
         raise MlflowException(
             message=(
-                f"Model of type '{type(model).__name__}' must have a "
+                f"Model of type '{model_type_name}' must have a "
                 "'save()' method. AutoGluon models typically have this method."
             ),
         )
