@@ -17,24 +17,24 @@ from mlflow_autogluon import (
 
 def test_flavor_name():
     """Test FLAVOR_NAME constant."""
-    assert FLAVOR_NAME == "autogluon"
+    assert FLAVOR_NAME == 'autogluon'
 
 
 def test_get_default_pip_requirements():
     """Test pip requirements generation."""
-    reqs = get_default_pip_requirements(model_type="tabular")
-    assert "autogluon" in reqs
-    assert "autogluon.tabular" in reqs
+    reqs = get_default_pip_requirements(model_type='tabular')
+    assert 'autogluon' in reqs
+    assert 'autogluon.tabular' in reqs
 
-    reqs = get_default_pip_requirements(model_type="multimodal")
-    assert "autogluon.multimodal" in reqs
+    reqs = get_default_pip_requirements(model_type='multimodal')
+    assert 'autogluon.multimodal' in reqs
 
 
 def test_get_default_conda_env():
     """Test conda environment generation."""
-    env = get_default_conda_env(model_type="tabular")
-    assert "dependencies" in env
-    assert "pip" in str(env)
+    env = get_default_conda_env(model_type='tabular')
+    assert 'dependencies' in env
+    assert 'pip' in str(env)
 
 
 def test_save_model_invalid_type():
@@ -45,11 +45,11 @@ def test_save_model_invalid_type():
             pass
 
     with tempfile.TemporaryDirectory() as tmp:
-        with pytest.raises(ValueError, match="Unsupported model_type"):
+        with pytest.raises(ValueError, match='Unsupported model_type'):
             save_model(
                 autogluon_model=FakeModel(),
                 path=tmp,
-                model_type="invalid_type",
+                model_type='invalid_type',
             )
 
 
@@ -65,7 +65,7 @@ def test_save_model_without_save_method():
             save_model(
                 autogluon_model=BadModel(),
                 path=tmp,
-                model_type="tabular",
+                model_type='tabular',
             )
         assert "must have a 'save()' method" in str(exc_info.value)
 
@@ -81,10 +81,10 @@ def test_save_model_creates_mlmodel_file():
         save_model(
             autogluon_model=FakeModel(),
             path=tmp,
-            model_type="tabular",
+            model_type='tabular',
         )
 
-        mlmodel_path = Path(tmp) / "MLmodel"
+        mlmodel_path = Path(tmp) / 'MLmodel'
         assert mlmodel_path.exists()
 
 
@@ -99,10 +99,10 @@ def test_save_model_creates_model_subdirectory():
         save_model(
             autogluon_model=FakeModel(),
             path=tmp,
-            model_type="tabular",
+            model_type='tabular',
         )
 
-        model_subpath = Path(tmp) / "model"
+        model_subpath = Path(tmp) / 'model'
         assert model_subpath.exists()
 
 
@@ -121,15 +121,15 @@ def test_log_model_creates_run_if_none_exists():
 
     # In MLflow 3.x, log_model auto-creates a run if none exists
     with tempfile.TemporaryDirectory() as tmp:
-        tracking_uri = f"file://{tmp}/mlruns"
+        tracking_uri = f'file://{tmp}/mlruns'
         mlflow.set_tracking_uri(tracking_uri)
 
         model_info = log_model(
             autogluon_model=FakeModel(),
-            artifact_path="model",
-            model_type="tabular",
+            artifact_path='model',
+            model_type='tabular',
         )
 
         assert model_info is not None
         # MLflow 3.x uses models:/ URI format
-        assert model_info.model_uri.startswith("models:/")
+        assert model_info.model_uri.startswith('models:/')

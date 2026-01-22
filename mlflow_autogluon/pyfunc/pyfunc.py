@@ -16,7 +16,7 @@ from mlflow_autogluon.predict_methods import PredictMethodLiteral
 from mlflow_autogluon.pyfunc.input_parser import parse_input
 from mlflow_autogluon.pyfunc.output_formatter import format_output
 
-_SUPPORTED_PREDICT_METHODS = ["predict", "predict_proba", "predict_multi"]
+_SUPPORTED_PREDICT_METHODS = ['predict', 'predict_proba', 'predict_multi']
 
 
 class _AutoGluonModelWrapper(PythonModel):
@@ -40,7 +40,7 @@ class _AutoGluonModelWrapper(PythonModel):
             self._model_path = path
             self._model = None
         else:
-            raise ValueError("Either path or autogluon_model must be provided")
+            raise ValueError('Either path or autogluon_model must be provided')
 
     def load_context(self, context: Any) -> None:
         """
@@ -54,7 +54,7 @@ class _AutoGluonModelWrapper(PythonModel):
         if self._model is None:
             from mlflow_autogluon.load import load_model
 
-            model_path = getattr(context, "artifacts", self._model_path)
+            model_path = getattr(context, 'artifacts', self._model_path)
             self._model = load_model(model_path)
 
     def predict(
@@ -86,17 +86,17 @@ class _AutoGluonModelWrapper(PythonModel):
         params = params or {}
 
         parsed_input = parse_input(model_input)
-        method_str = params.get("predict_method", "predict")
+        method_str = params.get('predict_method', 'predict')
 
         if method_str not in _SUPPORTED_PREDICT_METHODS:
             raise ValueError(
                 f"Invalid predict_method '{method_str}'. "
-                f"Supported: {_SUPPORTED_PREDICT_METHODS}"
+                f'Supported: {_SUPPORTED_PREDICT_METHODS}',
             )
 
         output = self._execute_prediction(parsed_input, method_str, params)
 
-        return format_output(output, params.get("as_pandas", True))
+        return format_output(output, params.get('as_pandas', True))
 
     def _execute_prediction(
         self,
@@ -117,18 +117,18 @@ class _AutoGluonModelWrapper(PythonModel):
         Raises:
             ValueError: If method is not supported by the model
         """
-        if method == "predict_proba" and not hasattr(self._model, "predict_proba"):
+        if method == 'predict_proba' and not hasattr(self._model, 'predict_proba'):
             raise ValueError(
-                f"Model {type(self._model).__name__} does not support predict_proba"
+                f'Model {type(self._model).__name__} does not support predict_proba',
             )
-        if method == "predict_multi" and not hasattr(self._model, "predict_multi"):
+        if method == 'predict_multi' and not hasattr(self._model, 'predict_multi'):
             raise ValueError(
-                f"Model {type(self._model).__name__} does not support predict_multi"
+                f'Model {type(self._model).__name__} does not support predict_multi',
             )
 
-        if method == "predict":
+        if method == 'predict':
             return self._model.predict(model_input)
-        if method == "predict_proba":
-            as_multiclass = params.get("as_multiclass", False)
+        if method == 'predict_proba':
+            as_multiclass = params.get('as_multiclass', False)
             return self._model.predict_proba(model_input, as_multiclass=as_multiclass)
         return self._model.predict_multi(model_input)

@@ -38,7 +38,7 @@ def load_model(
 
     flavor_conf = model.flavors[FLAVOR_NAME]
 
-    model_type = flavor_conf.get("model_type", "tabular")
+    model_type = flavor_conf.get('model_type', 'tabular')
 
     autogluon_model_path = os.path.join(local_model_path, AUTODEPLOY_SUBPATH)
 

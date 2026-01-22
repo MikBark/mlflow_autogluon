@@ -102,7 +102,7 @@ select = [
 ]
 
 [tool.ruff.format]
-quote-style = "double"
+quote-style = "single"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
@@ -114,12 +114,17 @@ max-arguments = 7
 extend-ignore = [
     "E203",   # whitespace before ':' - conflicts with ruff formatter
     "W503",   # line break before binary operator - conflicts with PEP 8
-    "WPS110", # wrong variable name (params, result, etc.) - these are standard mlflow names
-    "WPS111", # short variable 't' in enum iteration - standard convention
+    "WPS110", # wrong variable name - standard mlflow names
+    "WPS111", # short variable - standard convention
     "WPS226", # string literal over-use - model type strings used throughout
-    "WPS407", # mutable module constants with type annotations - acceptable pattern
-    "WPS410", # wrong metadata variable: __all__ - this is standard Python practice
-    "WPS412", # __init__.py module with logic - false positive, only imports here
-    "WPS529", # implicit .get() dict usage - concise and readable pattern
+    "WPS305", # f-strings - modern Python standard
+    "WPS326", # implicit string concatenation - readable pattern
+    "WPS407", # mutable module constants - acceptable pattern
+    "WPS410", # wrong metadata variable: __all__ - standard Python practice
+    "WPS412", # __init__.py module with logic - only imports here
+    "WPS421", # wrong function call: hasattr - standard Python function
+    "WPS433", # nested imports - necessary for lazy loading
+    "WPS450", # protected object import - necessary for internal imports
+    "WPS529", # implicit .get() dict usage - concise pattern
 ]
 exclude = ["tests"]

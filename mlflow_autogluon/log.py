@@ -14,7 +14,7 @@ from mlflow_autogluon.predict_methods import ModelTypeLiteral
 def log_model(  # noqa: WPS211,WPS213
     autogluon_model: Any | object,
     artifact_path: str,
-    model_type: ModelTypeLiteral = "tabular",
+    model_type: ModelTypeLiteral = 'tabular',
     conda_env: dict | str | None = None,
     pip_requirements: list[str] | None = None,
     extra_pip_requirements: list[str] | None = None,
@@ -41,10 +41,9 @@ def log_model(  # noqa: WPS211,WPS213
     Returns:
         ModelInfo: Logged model info including URI
     """
-
     return Model.log(
         artifact_path=artifact_path,
-        flavor=sys.modules["mlflow_autogluon"],
+        flavor=sys.modules['mlflow_autogluon'],
         autogluon_model=autogluon_model,
         model_type=model_type,
         conda_env=conda_env,

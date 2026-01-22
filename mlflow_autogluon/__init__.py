@@ -17,10 +17,10 @@ from mlflow_autogluon.requirements import (
 from mlflow_autogluon.save import save_model
 
 __all__ = [
-    "FLAVOR_NAME",
-    "save_model",
-    "log_model",
-    "load_model",
-    "get_default_conda_env",
-    "get_default_pip_requirements",
+    'FLAVOR_NAME',
+    'save_model',
+    'log_model',
+    'load_model',
+    'get_default_conda_env',
+    'get_default_pip_requirements',
 ]

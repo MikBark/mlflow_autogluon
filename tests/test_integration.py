@@ -11,10 +11,10 @@ def test_mlflow_plugin_registration():
     """Test that the plugin can be imported."""
     import mlflow_autogluon
 
-    assert hasattr(mlflow_autogluon, "FLAVOR_NAME")
-    assert hasattr(mlflow_autogluon, "save_model")
-    assert hasattr(mlflow_autogluon, "log_model")
-    assert hasattr(mlflow_autogluon, "load_model")
+    assert hasattr(mlflow_autogluon, 'FLAVOR_NAME')
+    assert hasattr(mlflow_autogluon, 'save_model')
+    assert hasattr(mlflow_autogluon, 'log_model')
+    assert hasattr(mlflow_autogluon, 'load_model')
 
 
 def test_end_to_end_save_and_load_with_mock_model():
@@ -27,7 +27,7 @@ def test_end_to_end_save_and_load_with_mock_model():
 
         def save(self, path):
             self.path = path
-            model_path = Path(path) / "model"
+            model_path = Path(path) / 'model'
             model_path.mkdir(parents=True, exist_ok=True)
 
         def predict(self, data):
@@ -39,13 +39,13 @@ def test_end_to_end_save_and_load_with_mock_model():
         save_model(
             autogluon_model=model,
             path=tmp,
-            model_type="tabular",
+            model_type='tabular',
         )
 
-        mlmodel_path = Path(tmp) / "MLmodel"
+        mlmodel_path = Path(tmp) / 'MLmodel'
         assert mlmodel_path.exists()
 
-        with patch("autogluon.tabular.TabularPredictor") as mock_predictor:
+        with patch('autogluon.tabular.TabularPredictor') as mock_predictor:
             mock_predictor.load.return_value = model
 
             loaded_model = load_model(tmp)
@@ -53,7 +53,7 @@ def test_end_to_end_save_and_load_with_mock_model():
             mock_predictor.load.assert_called_once()
 
 
-@patch("autogluon.tabular.TabularPredictor")
+@patch('autogluon.tabular.TabularPredictor')
 def test_load_model_calls_tabular_predictor_load(mock_predictor):
     """Test that load_model calls TabularPredictor.load()."""
 
@@ -62,18 +62,18 @@ def test_load_model_calls_tabular_predictor_load(mock_predictor):
     with tempfile.TemporaryDirectory() as tmp:
         # Create the necessary directory structure and MLmodel file
         Path(tmp).mkdir(parents=True, exist_ok=True)
-        model_path = Path(tmp) / "model"
+        model_path = Path(tmp) / 'model'
         model_path.mkdir(parents=True, exist_ok=True)
 
         # Create a minimal MLmodel file
         import json
 
-        mlmodel_path = Path(tmp) / "MLmodel"
+        mlmodel_path = Path(tmp) / 'MLmodel'
         mlmodel_path.write_text(
             json.dumps(
                 {
-                    "flavors": {
-                        "autogluon": {"model_type": "tabular"},
+                    'flavors': {
+                        'autogluon': {'model_type': 'tabular'},
                     }
                 }
             )

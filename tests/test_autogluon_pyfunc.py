@@ -32,7 +32,7 @@ def test_pyfunc_wrapper_init_needs_argument():
     """Test PyFunc wrapper requires either path or model."""
     with pytest.raises(ValueError) as exc_info:
         _AutoGluonModelWrapper()
-    assert "Either path or autogluon_model must be provided" in str(exc_info.value)
+    assert 'Either path or autogluon_model must be provided' in str(exc_info.value)
 
 
 def test_pyfunc_predict_with_params():
@@ -42,8 +42,8 @@ def test_pyfunc_predict_with_params():
 
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
-    input_data = pd.DataFrame({"a": [1, 2, 3]})
-    result = wrapper.predict(None, input_data, params={"predict_method": "predict"})
+    input_data = pd.DataFrame({'a': [1, 2, 3]})
+    result = wrapper.predict(None, input_data, params={'predict_method': 'predict'})
 
     mock_model.predict.assert_called_once()
     assert isinstance(result, pd.Series)
@@ -55,12 +55,12 @@ def test_pyfunc_predict_invalid_method():
 
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
-    input_data = pd.DataFrame({"a": [1, 2, 3]})
+    input_data = pd.DataFrame({'a': [1, 2, 3]})
 
     with pytest.raises(ValueError) as exc_info:
-        wrapper.predict(None, input_data, params={"predict_method": "invalid"})
+        wrapper.predict(None, input_data, params={'predict_method': 'invalid'})
 
-    assert "Invalid predict_method" in str(exc_info.value)
+    assert 'Invalid predict_method' in str(exc_info.value)
 
 
 def test_pyfunc_predict_predict_proba_not_supported():
@@ -71,12 +71,12 @@ def test_pyfunc_predict_predict_proba_not_supported():
 
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
-    input_data = pd.DataFrame({"a": [1, 2, 3]})
+    input_data = pd.DataFrame({'a': [1, 2, 3]})
 
     with pytest.raises(ValueError) as exc_info:
-        wrapper.predict(None, input_data, params={"predict_method": "predict_proba"})
+        wrapper.predict(None, input_data, params={'predict_method': 'predict_proba'})
 
-    assert "does not support predict_proba" in str(exc_info.value)
+    assert 'does not support predict_proba' in str(exc_info.value)
 
 
 def test_pyfunc_predict_with_dict_input():
@@ -86,7 +86,7 @@ def test_pyfunc_predict_with_dict_input():
 
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
-    input_data = {"a": [1, 2, 3], "b": [4, 5, 6]}
+    input_data = {'a': [1, 2, 3], 'b': [4, 5, 6]}
     result = wrapper.predict(None, input_data)
 
     mock_model.predict.assert_called_once()
@@ -101,9 +101,9 @@ def test_pyfunc_predict_with_dataframe_split_format():
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = {
-        "dataframe_split": {
-            "data": [[1, 4], [2, 5], [3, 6]],
-            "columns": ["a", "b"],
+        'dataframe_split': {
+            'data': [[1, 4], [2, 5], [3, 6]],
+            'columns': ['a', 'b'],
         }
     }
     result = wrapper.predict(None, input_data)
@@ -115,11 +115,11 @@ def test_pyfunc_predict_with_dataframe_split_format():
 def test_pyfunc_predict_as_pandas_false():
     """Test PyFunc predict() with as_pandas=False."""
     mock_model = MagicMock()
-    mock_model.predict.return_value = pd.DataFrame({"pred": [1, 2, 3]})
+    mock_model.predict.return_value = pd.DataFrame({'pred': [1, 2, 3]})
 
     wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
 
-    input_data = pd.DataFrame({"a": [1, 2, 3]})
-    result = wrapper.predict(None, input_data, params={"as_pandas": False})
+    input_data = pd.DataFrame({'a': [1, 2, 3]})
+    result = wrapper.predict(None, input_data, params={'as_pandas': False})
 
     assert isinstance(result, list)

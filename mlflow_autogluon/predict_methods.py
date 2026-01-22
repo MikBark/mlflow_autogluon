@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-ModelTypeLiteral = Literal["tabular", "multimodal", "vision", "timeseries"]
-PredictMethodLiteral = Literal["predict", "predict_proba", "predict_multi"]
+ModelTypeLiteral = Literal['tabular', 'multimodal', 'vision', 'timeseries']
+PredictMethodLiteral = Literal['predict', 'predict_proba', 'predict_multi']
 
 
 def get_model_loader(model_type: ModelTypeLiteral) -> Any:
@@ -20,24 +20,24 @@ def get_model_loader(model_type: ModelTypeLiteral) -> Any:
     Raises:
         ValueError: If model_type is not supported
     """
-    if model_type == "tabular":
+    if model_type == 'tabular':
         from autogluon.tabular import TabularPredictor
 
         return TabularPredictor.load
-    if model_type == "multimodal":
+    if model_type == 'multimodal':
         from autogluon.multimodal import MultiModalPredictor
 
         return MultiModalPredictor.load
-    if model_type == "vision":
+    if model_type == 'vision':
         from autogluon.vision import VisionPredictor
 
         return VisionPredictor.load
-    if model_type == "timeseries":
+    if model_type == 'timeseries':
         from autogluon.timeseries import TimeSeriesPredictor
 
         return TimeSeriesPredictor.load
 
     raise ValueError(
         f"Unsupported model_type '{model_type}'. "
-        "Supported: ['tabular', 'multimodal', 'vision', 'timeseries']"
+        f"Supported: ['tabular', 'multimodal', 'vision', 'timeseries']",
     )

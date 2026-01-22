@@ -22,5 +22,5 @@ def format_output(
         Formatted output as DataFrame, dict, or list
     """
     if not as_pandas and isinstance(output, pd.DataFrame):
-        return output.to_dict(orient="records")
+        return output.to_dict(orient='records')
     return output

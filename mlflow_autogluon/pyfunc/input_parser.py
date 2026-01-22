@@ -10,7 +10,8 @@ import pandas as pd
 class SupportsDataFrameConversion(Protocol):
     """Protocol for objects that can be converted to DataFrame."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: D107
+        ...
 
 
 def parse_input(model_input: pd.DataFrame | dict[str, Any] | Any) -> pd.DataFrame:
@@ -26,10 +27,10 @@ def parse_input(model_input: pd.DataFrame | dict[str, Any] | Any) -> pd.DataFram
         return model_input
 
     if isinstance(model_input, dict):
-        if "dataframe_split" in model_input:
-            return pd.DataFrame(**model_input["dataframe_split"])
-        if "dataframe_records" in model_input:
-            return pd.DataFrame(model_input["dataframe_records"])
+        if 'dataframe_split' in model_input:
+            return pd.DataFrame(**model_input['dataframe_split'])
+        if 'dataframe_records' in model_input:
+            return pd.DataFrame(model_input['dataframe_records'])
         return pd.DataFrame(model_input)
 
     return pd.DataFrame(model_input)
