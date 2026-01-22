@@ -1,6 +1,4 @@
-"""
-PyFunc wrapper tests for AutoGluon integration.
-"""
+"""PyFunc wrapper tests for AutoGluon integration."""
 
 import tempfile
 from unittest.mock import MagicMock, Mock
