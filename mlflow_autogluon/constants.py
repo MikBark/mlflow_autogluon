@@ -1,6 +1,6 @@
-from types import MappingProxyType
-
 """Constants for AutoGluon MLflow flavor."""
+
+from types import MappingProxyType
 
 FLAVOR_NAME = 'autogluon'
 AUTODEPLOY_SUBPATH = 'model'

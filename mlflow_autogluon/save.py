@@ -64,11 +64,9 @@ def save_model(  # noqa: WPS201,WPS211,WPS213
         MlflowException: If model_type is not supported or model lacks save() method
     """
     if model_type not in MODEL_PACKAGES:
+        supported = tuple(MODEL_PACKAGES.keys())
         raise MlflowException(
-            message=(
-                f"Unsupported model_type '{model_type}'. "
-                f"Supported: {tuple(MODEL_PACKAGES.keys())}"
-            ),
+            message=f"Unsupported model_type '{model_type}'. Supported: {supported}",
         )
 
     _validate_model(autogluon_model)
