@@ -6,7 +6,7 @@ from typing import Any
 
 from mlflow.utils.environment import _mlflow_conda_env
 
-from mlflow_autogluon.predict_methods import ModelTypeLiteral
+from mlflow_autogluon.types import ModelTypeLiteral
 
 _MODEL_PACKAGES = {
     'tabular': 'autogluon.tabular',

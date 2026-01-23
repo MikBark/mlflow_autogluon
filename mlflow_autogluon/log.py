@@ -8,7 +8,7 @@ from typing import Any
 from mlflow.models import Model
 from mlflow.models.model import ModelInfo
 
-from mlflow_autogluon.predict_methods import ModelTypeLiteral
+from mlflow_autogluon.types import ModelTypeLiteral
 
 
 def log_model(  # noqa: WPS211,WPS213

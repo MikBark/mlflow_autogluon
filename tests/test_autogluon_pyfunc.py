@@ -6,14 +6,14 @@ from unittest.mock import MagicMock, Mock
 import pandas as pd
 import pytest
 
-from mlflow_autogluon.pyfunc import _AutoGluonModelWrapper
+from mlflow_autogluon.pyfunc import AutoGluonModelWrapper
 
 
 def test_pyfunc_wrapper_init_with_model():
     """Test PyFunc wrapper initialization with pre-loaded model."""
     mock_model = Mock()
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     assert wrapper._model is mock_model
 
@@ -21,7 +21,7 @@ def test_pyfunc_wrapper_init_with_model():
 def test_pyfunc_wrapper_init_with_path():
     """Test PyFunc wrapper initialization with path."""
     with tempfile.TemporaryDirectory() as tmp:
-        wrapper = _AutoGluonModelWrapper(path=tmp)
+        wrapper = AutoGluonModelWrapper(path=tmp)
         assert wrapper._model is None
         assert wrapper._model_path == tmp
 
@@ -29,7 +29,7 @@ def test_pyfunc_wrapper_init_with_path():
 def test_pyfunc_wrapper_init_needs_argument():
     """Test PyFunc wrapper requires either path or model."""
     with pytest.raises(ValueError) as exc_info:
-        _AutoGluonModelWrapper()
+        AutoGluonModelWrapper()
     assert 'Either path or autogluon_model must be provided' in str(exc_info.value)
 
 
@@ -38,7 +38,7 @@ def test_pyfunc_predict_with_params():
     mock_model = MagicMock()
     mock_model.predict.return_value = pd.Series([1, 2, 3])
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = pd.DataFrame({'a': [1, 2, 3]})
     result = wrapper.predict(None, input_data, params={'predict_method': 'predict'})
@@ -51,7 +51,7 @@ def test_pyfunc_predict_invalid_method():
     """Test PyFunc predict() with invalid predict_method."""
     mock_model = MagicMock()
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = pd.DataFrame({'a': [1, 2, 3]})
 
@@ -67,7 +67,7 @@ def test_pyfunc_predict_predict_proba_not_supported():
     mock_model.predict.return_value = pd.Series([1, 2, 3])
     del mock_model.predict_proba
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = pd.DataFrame({'a': [1, 2, 3]})
 
@@ -82,7 +82,7 @@ def test_pyfunc_predict_with_dict_input():
     mock_model = MagicMock()
     mock_model.predict.return_value = pd.Series([1, 2, 3])
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = {'a': [1, 2, 3], 'b': [4, 5, 6]}
     result = wrapper.predict(None, input_data)
@@ -96,7 +96,7 @@ def test_pyfunc_predict_with_dataframe_split_format():
     mock_model = MagicMock()
     mock_model.predict.return_value = pd.Series([1, 2, 3])
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = {
         'dataframe_split': {
@@ -115,7 +115,7 @@ def test_pyfunc_predict_as_pandas_false():
     mock_model = MagicMock()
     mock_model.predict.return_value = pd.DataFrame({'pred': [1, 2, 3]})
 
-    wrapper = _AutoGluonModelWrapper(autogluon_model=mock_model)
+    wrapper = AutoGluonModelWrapper(autogluon_model=mock_model)
 
     input_data = pd.DataFrame({'a': [1, 2, 3]})
     result = wrapper.predict(None, input_data, params={'as_pandas': False})

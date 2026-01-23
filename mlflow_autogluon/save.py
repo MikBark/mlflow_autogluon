@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -16,10 +17,25 @@ from mlflow_autogluon.constants import (
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
 )
-from mlflow_autogluon.predict_methods import ModelTypeLiteral
 from mlflow_autogluon.requirements import get_default_conda_env
+from mlflow_autogluon.types import ModelTypeLiteral
 
 _SUPPORTED_MODEL_TYPES = ['tabular', 'multimodal', 'vision', 'timeseries']
+
+
+@dataclass(frozen=True)
+class _MlflowConfig:
+    """Configuration for MLflow model setup.
+
+    Attributes:
+        model_type: Type of AutoGluon model
+        conda_env: Conda environment dict or path to yaml file
+        extra_pip_requirements: Extra pip requirements to add
+    """
+
+    model_type: str
+    conda_env: dict | str | None = None
+    extra_pip_requirements: list[str] | None = None
 
 
 def save_model(  # noqa: WPS201,WPS211,WPS213
@@ -58,12 +74,11 @@ def save_model(  # noqa: WPS201,WPS211,WPS213
 
     _validate_model(autogluon_model)
     path = _prepare_save_path(path)
+    config = _MlflowConfig(model_type, conda_env, extra_pip_requirements)
     mlflow_model = _configure_mlflow_model(
         mlflow_model,
         path,
-        model_type,
-        conda_env,
-        extra_pip_requirements,
+        config,
         kwargs,
     )
 
@@ -107,9 +122,7 @@ def _prepare_save_path(path: str) -> Path:
 def _configure_mlflow_model(
     mlflow_model: Model | None,
     path: Path,
-    model_type: str,
-    conda_env: dict | str | None,
-    extra_pip_requirements: list[str] | None,
+    config: _MlflowConfig,
     kwargs: dict[str, Any],
 ) -> Model:
     """Configure MLflow model with flavors and save MLmodel file.
@@ -117,9 +130,7 @@ def _configure_mlflow_model(
     Args:
         mlflow_model: Existing MLflow model or None
         path: Path where model is being saved
-        model_type: Type of AutoGluon model
-        conda_env: Conda environment
-        extra_pip_requirements: Extra pip requirements
+        config: MLflow configuration including model type and conda env
         kwargs: Additional arguments
 
     Returns:
@@ -128,17 +139,18 @@ def _configure_mlflow_model(
     if mlflow_model is None:
         mlflow_model = Model()
 
+    conda_env = config.conda_env
     if conda_env is None:
         conda_env = get_default_conda_env(
-            model_type=model_type,
-            additional_pip_requirements=extra_pip_requirements,
+            model_type=config.model_type,
+            additional_pip_requirements=config.extra_pip_requirements,
         )
     elif isinstance(conda_env, str):
         conda_env = json.loads(Path(conda_env).read_text())
 
     mlflow_model.add_flavor(
         FLAVOR_NAME,
-        model_type=model_type,
+        model_type=config.model_type,
         autogluon_version=kwargs.get('autogluon_version'),
         predictor_metadata=kwargs.get('predictor_metadata', {}),
     )
@@ -146,7 +158,7 @@ def _configure_mlflow_model(
     mlflow_model.add_flavor(
         'python_function',
         loader_module='mlflow_autogluon.pyfunc',
-        model_type=model_type,
+        model_type=config.model_type,
     )
 
     mlflow_model_file_path = path / MLMODEL_FILE_NAME
@@ -227,5 +239,5 @@ def _write_metadata(
         )
 
     metadata_file_path = path / AUTODEPLOY_METADATA_FILE
-    with open(metadata_file_path, 'w') as metadata_file:
+    with metadata_file_path.open('w') as metadata_file:
         json.dump(metadata, metadata_file, indent=2)

@@ -72,3 +72,5 @@ AutogluonModels/
 dmypy.json
 
 .ruff_cache/
+
+.claude

@@ -12,23 +12,24 @@ from typing import Any
 import pandas as pd
 from mlflow.pyfunc import PythonModel
 
-from mlflow_autogluon.predict_methods import PredictMethodLiteral
 from mlflow_autogluon.pyfunc.input_parser import parse_input
 from mlflow_autogluon.pyfunc.output_formatter import format_output
+from mlflow_autogluon.types import PredictMethodLiteral
 
-_SUPPORTED_PREDICT_METHODS = ['predict', 'predict_proba', 'predict_multi']
 
-
-class _AutoGluonModelWrapper(PythonModel):
+class AutoGluonModelWrapper(PythonModel):
     """PyFunc wrapper for AutoGluon models.
 
     This wrapper enables AutoGluon models to be loaded via mlflow.pyfunc.load_model()
     and provides a standardized predict() interface that accepts pandas DataFrames.
     """
 
-    def __init__(self, path: str | Path = None, autogluon_model: Any = None):
-        """
-        Initialize the wrapper.
+    def __init__(
+        self,
+        path: str | Path | None = None,
+        autogluon_model: Any = None,
+    ) -> None:
+        """Initialize the wrapper.
 
         Args:
             path: Path to saved model directory
@@ -43,8 +44,7 @@ class _AutoGluonModelWrapper(PythonModel):
             raise ValueError('Either path or autogluon_model must be provided')
 
     def load_context(self, context: Any) -> None:
-        """
-        Load the AutoGluon model from the artifact path.
+        """Load the AutoGluon model from the artifact path.
 
         This method is called by MLflow before predict().
 
@@ -61,6 +61,7 @@ class _AutoGluonModelWrapper(PythonModel):
         self,
         context: Any,
         model_input: pd.DataFrame | dict[str, Any],
+        # TODO: replace `params` default with empty immutable dict (MappingProxyType)
         params: dict[str, Any] | None = None,
     ) -> pd.DataFrame | dict[str, Any] | list[Any]:
         """
@@ -82,20 +83,11 @@ class _AutoGluonModelWrapper(PythonModel):
         """
         if self._model is None:
             self.load_context(context)
-
         params = params or {}
-
         parsed_input = parse_input(model_input)
-        method_str = params.get('predict_method', 'predict')
-
-        if method_str not in _SUPPORTED_PREDICT_METHODS:
-            raise ValueError(
-                f"Invalid predict_method '{method_str}'. "
-                f'Supported: {_SUPPORTED_PREDICT_METHODS}',
-            )
-
-        output = self._execute_prediction(parsed_input, method_str, params)
-
+        output = self._execute_prediction(
+            parsed_input, params.get('predict_method', 'predict'), params
+        )
         return format_output(output, params.get('as_pandas', True))
 
     def _execute_prediction(

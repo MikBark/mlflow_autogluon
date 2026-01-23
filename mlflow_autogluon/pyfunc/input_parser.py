@@ -2,16 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Any, Protocol
+from typing import Any
 
 import pandas as pd
-
-
-class SupportsDataFrameConversion(Protocol):
-    """Protocol for objects that can be converted to DataFrame."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: D107
-        ...
 
 
 def parse_input(model_input: pd.DataFrame | dict[str, Any] | Any) -> pd.DataFrame:
