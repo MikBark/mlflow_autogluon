@@ -52,7 +52,7 @@ class AutoGluonModelWrapper(PythonModel):
             context: MLflow context containing artifact path
         """
         if self._model is None:
-            from mlflow_autogluon.load import load_model
+            from mlflow_autogluon.load import load_model  # noqa: WPS433
 
             model_path = getattr(context, 'artifacts', self._model_path)
             self._model = load_model(model_path)
@@ -107,8 +107,13 @@ class AutoGluonModelWrapper(PythonModel):
             Prediction output
 
         Raises:
-            ValueError: If method is not supported by the model
+            ValueError: If method is invalid or not supported by the model
         """
+        if method not in ('predict', 'predict_proba', 'predict_multi'):
+            raise ValueError(
+                f"Invalid predict_method '{method}'. "
+                "Must be one of: predict, predict_proba, predict_multi",
+            )
         if method == 'predict_proba' and not hasattr(self._model, 'predict_proba'):
             model_name = type(self._model).__name__
             raise ValueError(f'Model {model_name} does not support predict_proba')

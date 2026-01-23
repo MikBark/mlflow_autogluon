@@ -72,19 +72,19 @@ def get_model_loader(model_type: ModelTypeLiteral) -> Any:
         ValueError: If model_type is not supported
     """
     if model_type == 'tabular':
-        from autogluon.tabular import TabularPredictor
+        from autogluon.tabular import TabularPredictor  # noqa: WPS433
 
         return TabularPredictor.load
     if model_type == 'multimodal':
-        from autogluon.multimodal import MultiModalPredictor
+        from autogluon.multimodal import MultiModalPredictor  # noqa: WPS433
 
         return MultiModalPredictor.load
     if model_type == 'vision':
-        from autogluon.vision import VisionPredictor
+        from autogluon.vision import VisionPredictor  # noqa: WPS433
 
         return VisionPredictor.load
     if model_type == 'timeseries':
-        from autogluon.timeseries import TimeSeriesPredictor
+        from autogluon.timeseries import TimeSeriesPredictor  # noqa: WPS433
 
         return TimeSeriesPredictor.load
 
