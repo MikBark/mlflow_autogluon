@@ -9,8 +9,8 @@ from mlflow.artifacts import download_artifacts
 from mlflow.models import Model
 
 from mlflow_autogluon.constants import AUTODEPLOY_SUBPATH, FLAVOR_NAME
+from mlflow_autogluon.literals import ModelTypeLiteral
 from mlflow_autogluon.pyfunc.pyfunc import AutoGluonModelWrapper
-from mlflow_autogluon.types import ModelTypeLiteral
 
 
 def load_model(

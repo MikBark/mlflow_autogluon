@@ -6,14 +6,8 @@ from typing import Any
 
 from mlflow.utils.environment import _mlflow_conda_env
 
-from mlflow_autogluon.types import ModelTypeLiteral
-
-_MODEL_PACKAGES = {
-    'tabular': 'autogluon.tabular',
-    'multimodal': 'autogluon.multimodal',
-    'vision': 'autogluon.vision',
-    'timeseries': 'autogluon.timeseries',
-}
+from mlflow_autogluon.constants import MODEL_PACKAGES
+from mlflow_autogluon.literals import ModelTypeLiteral
 
 
 def get_default_pip_requirements(
@@ -29,7 +23,7 @@ def get_default_pip_requirements(
     Returns:
         List of pip requirement strings
     """
-    return ['autogluon', _MODEL_PACKAGES[model_type]]
+    return ['autogluon', MODEL_PACKAGES[model_type]]
 
 
 def get_default_conda_env(

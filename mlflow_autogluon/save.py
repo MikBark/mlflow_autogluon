@@ -16,11 +16,10 @@ from mlflow_autogluon.constants import (
     AUTODEPLOY_METADATA_FILE,
     AUTODEPLOY_SUBPATH,
     FLAVOR_NAME,
+    MODEL_PACKAGES,
 )
+from mlflow_autogluon.literals import ModelTypeLiteral
 from mlflow_autogluon.requirements import get_default_conda_env
-from mlflow_autogluon.types import ModelTypeLiteral
-
-_SUPPORTED_MODEL_TYPES = ['tabular', 'multimodal', 'vision', 'timeseries']
 
 
 @dataclass(frozen=True)
@@ -64,11 +63,11 @@ def save_model(  # noqa: WPS201,WPS211,WPS213
     Raises:
         MlflowException: If model_type is not supported or model lacks save() method
     """
-    if model_type not in _SUPPORTED_MODEL_TYPES:
+    if model_type not in MODEL_PACKAGES:
         raise MlflowException(
             message=(
                 f"Unsupported model_type '{model_type}'. "
-                f'Supported: {_SUPPORTED_MODEL_TYPES}'
+                f"Supported: {tuple(MODEL_PACKAGES.keys())}"
             ),
         )
 

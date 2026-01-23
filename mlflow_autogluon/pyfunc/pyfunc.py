@@ -12,9 +12,9 @@ from typing import Any
 import pandas as pd
 from mlflow.pyfunc import PythonModel
 
+from mlflow_autogluon.literals import PredictMethodLiteral
 from mlflow_autogluon.pyfunc.input_parser import parse_input
 from mlflow_autogluon.pyfunc.output_formatter import format_output
-from mlflow_autogluon.types import PredictMethodLiteral
 
 
 class AutoGluonModelWrapper(PythonModel):
