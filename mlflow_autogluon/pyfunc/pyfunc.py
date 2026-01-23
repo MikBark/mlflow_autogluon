@@ -109,7 +109,7 @@ class AutoGluonModelWrapper(PythonModel):
         Raises:
             ValueError: If method is invalid or not supported by the model
         """
-        if method not in ('predict', 'predict_proba', 'predict_multi'):
+        if method not in {'predict', 'predict_proba', 'predict_multi'}:
             raise ValueError(
                 f"Invalid predict_method '{method}'. "
                 "Must be one of: predict, predict_proba, predict_multi",
