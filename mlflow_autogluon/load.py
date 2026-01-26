@@ -2,22 +2,21 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from mlflow.artifacts import download_artifacts
-from mlflow.exceptions import MlflowException
 from mlflow.models import Model
 
-from mlflow_autogluon.constants import (
-    AUTODEPLOY_SUBPATH,
-    FLAVOR_NAME,
-)
+from mlflow_autogluon.constants import AUTODEPLOY_SUBPATH, FLAVOR_NAME
+from mlflow_autogluon.literals import ModelTypeLiteral
+from mlflow_autogluon.pyfunc.pyfunc import AutoGluonModelWrapper
 
 
 def load_model(
     model_uri: str,
     dst_path: str | None = None,
-) -> Any | object:
+) -> Any | object:  # noqa: WPS210,WPS211
     """
     Load an AutoGluon model from MLflow.
 
@@ -29,40 +28,20 @@ def load_model(
         Loaded AutoGluon model instance
 
     Raises:
-        MlflowException: If model cannot be loaded or flavor configuration is invalid
+        ValueError: If model cannot be loaded or flavor configuration is invalid
     """
-    import os
-
     local_model_path = download_artifacts(artifact_uri=model_uri, dst_path=dst_path)
 
     model = Model.load(local_model_path)
 
     flavor_conf = model.flavors[FLAVOR_NAME]
 
-    model_type = flavor_conf.get("model_type", "tabular")
+    model_type = flavor_conf.get('model_type', 'tabular')
 
-    autogluon_model_path = os.path.join(local_model_path, AUTODEPLOY_SUBPATH)
+    autogluon_model_path = Path(local_model_path) / AUTODEPLOY_SUBPATH
 
-    if model_type == "tabular":
-        from autogluon.tabular import TabularPredictor
-
-        return TabularPredictor.load(autogluon_model_path)
-    elif model_type == "multimodal":
-        from autogluon.multimodal import MultiModalPredictor
-
-        return MultiModalPredictor.load(autogluon_model_path)
-    elif model_type == "vision":
-        from autogluon.vision import VisionPredictor
-
-        return VisionPredictor.load(autogluon_model_path)
-    elif model_type == "timeseries":
-        from autogluon.timeseries import TimeSeriesPredictor
-
-        return TimeSeriesPredictor.load(autogluon_model_path)
-    else:
-        raise MlflowException(
-            message=f"Unsupported model_type '{model_type}' in flavor configuration"
-        )
+    loader = get_model_loader(model_type)
+    return loader(autogluon_model_path)
 
 
 def _load_pyfunc(path: str) -> Any:
@@ -77,6 +56,39 @@ def _load_pyfunc(path: str) -> Any:
     Returns:
         PyFunc-compatible wrapper instance
     """
-    from mlflow_autogluon.pyfunc import _AutoGluonModelWrapper
+    return AutoGluonModelWrapper(path)
 
-    return _AutoGluonModelWrapper(path)
+
+def get_model_loader(model_type: ModelTypeLiteral) -> Any:
+    """Get the loader function for the given model type.
+
+    Args:
+        model_type: Type of AutoGluon model
+
+    Returns:
+        Loader function that takes a path and returns a loaded model
+
+    Raises:
+        ValueError: If model_type is not supported
+    """
+    if model_type == 'tabular':
+        from autogluon.tabular import TabularPredictor  # noqa: WPS433
+
+        return TabularPredictor.load
+    if model_type == 'multimodal':
+        from autogluon.multimodal import MultiModalPredictor  # noqa: WPS433
+
+        return MultiModalPredictor.load
+    if model_type == 'vision':
+        from autogluon.vision import VisionPredictor  # noqa: WPS433
+
+        return VisionPredictor.load
+    if model_type == 'timeseries':
+        from autogluon.timeseries import TimeSeriesPredictor  # noqa: WPS433
+
+        return TimeSeriesPredictor.load
+
+    raise ValueError(
+        f"Unsupported model_type '{model_type}'. "
+        f"Supported: ['tabular', 'multimodal', 'vision', 'timeseries']",
+    )

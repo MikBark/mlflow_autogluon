@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
+import sys
 from typing import Any
 
 from mlflow.models import Model
 from mlflow.models.model import ModelInfo
 
+from mlflow_autogluon.literals import ModelTypeLiteral
 
-def log_model(
+
+def log_model(  # noqa: WPS211,WPS213
     autogluon_model: Any | object,
     artifact_path: str,
-    model_type: str = "tabular",
+    model_type: ModelTypeLiteral = 'tabular',
     conda_env: dict | str | None = None,
     pip_requirements: list[str] | None = None,
     extra_pip_requirements: list[str] | None = None,
@@ -38,11 +41,9 @@ def log_model(
     Returns:
         ModelInfo: Logged model info including URI
     """
-    import sys
-
     return Model.log(
         artifact_path=artifact_path,
-        flavor=sys.modules["mlflow_autogluon"],
+        flavor=sys.modules['mlflow_autogluon'],
         autogluon_model=autogluon_model,
         model_type=model_type,
         conda_env=conda_env,
