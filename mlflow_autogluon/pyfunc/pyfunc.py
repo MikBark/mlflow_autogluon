@@ -112,7 +112,7 @@ class AutoGluonModelWrapper(PythonModel):
         if method not in {'predict', 'predict_proba', 'predict_multi'}:
             raise ValueError(
                 f"Invalid predict_method '{method}'. "
-                "Must be one of: predict, predict_proba, predict_multi",
+                'Must be one of: predict, predict_proba, predict_multi',
             )
         if method == 'predict_proba' and not hasattr(self._model, 'predict_proba'):
             model_name = type(self._model).__name__
