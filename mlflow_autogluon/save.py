@@ -188,10 +188,7 @@ def _save_tabular_model(
     autogluon_model: Any | object,
     autogluon_model_path: Path,
 ) -> None:
-    """Save tabular model with path preservation.
-
-    Tabular models have special handling to preserve the original path
-    attribute after saving.
+    """Save tabular model.
 
     Args:
         autogluon_model: TabularPredictor instance
@@ -200,15 +197,11 @@ def _save_tabular_model(
     temp_save_path = autogluon_model_path.parent / 'temp_autogluon_save'
     temp_save_path.mkdir(parents=True, exist_ok=True)
 
-    original_path = getattr(autogluon_model, 'path', None)
     autogluon_model.save(str(temp_save_path))
 
     if autogluon_model_path.exists():
         shutil.rmtree(autogluon_model_path)
     shutil.move(str(temp_save_path), str(autogluon_model_path))
-
-    if original_path:
-        autogluon_model.path = original_path
 
 
 def _write_metadata(
